@@ -11,9 +11,6 @@ namespace ConsoleTester
     {
         static void Main(string[] args)
         {
-
-            Console.WriteLine("here");
-
             string inputString = "CreatedBy,CreatedDate,POINT_X,POINT_Y,POINT_Z,Measurement,Description,EquipmentID,Accuracy,Probe\n";
             inputString += "NREC,12/11/2007,-92.59408969,46.69754508,395.4645888,57, ,,,0\n";
             inputString += "NREC,12/11/2007,-92.59382724,46.69732872,398.3757336,68, ,,,0\n";
@@ -47,10 +44,10 @@ namespace ConsoleTester
             string dllXmlPath = @"S:\EnbridgeClassLibrary\Enbridge\bin\Debug\Enbridge.xml";
 
             //List of output paths for the dll
-            List<string> copyDllPaths = new List<string>();
-            copyDllPaths.Add(@"Q:\Workflow Designer\Enbridge.dll");
-            copyDllPaths.Add(@"C:\Program Files (x86)\Latitude Geographics\Geocortex Essentials\Default\Workflow Designer\Enbridge.dll");
-            copyDllPaths.Add(@"Q:\REST Elements\REST\bin\Enbridge.dll");
+            string[] copyDllPaths = {@"Q:\Workflow Designer\Enbridge.dll",
+                                    @"C:\Program Files (x86)\Latitude Geographics\Geocortex Essentials\Default\Workflow Designer\Enbridge.dll",
+                                    @"Q:\REST Elements\REST\bin\Enbridge.dll"};
+
 
             //Copy to each of the output directory paths, use try catch block as the assembly may be in use and blocked from overwrite
             foreach (string copyToPath in copyDllPaths)
