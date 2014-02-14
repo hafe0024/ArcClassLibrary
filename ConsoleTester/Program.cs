@@ -15,6 +15,15 @@ namespace ConsoleTester
         static void Main(string[] args)
         {
 
+
+
+
+            Enbridge.DepthOfCover.UpdateDocPointsSegments.MakeSegments();
+
+          
+
+
+
             //Enbridge.ArcObjects.LicenseInit licenseInit = new Enbridge.ArcObjects.LicenseInit();
             //Console.WriteLine(licenseInit.isInitialized);
             //Console.WriteLine(licenseInit.getInitializedProduct());
@@ -132,23 +141,23 @@ namespace ConsoleTester
 
 
             //#region test_DOC
-            string inputString = "CreatedBy,CreatedDate,POINT_X,POINT_Y,POINT_Z,Measurement,Description,EquipmentID,Accuracy,Probe\n";
-            inputString += "NREC,11/21/2007,-92.68507821,46.7608733,394.6309608,38, ,,10,0\n";
-            inputString += "NREC,11/21/2007,-92.68481501,46.76068996,395.9879304,47, ,,5,0\n";
-            inputString += "NREC,11/21/2007,-92.68457329,46.76053073,395.1192504,24, ,,,0\n";
-            inputString += "NREC,11/21/2007,-92.68435982,46.76038175,395.566392,45, ,,,0\n";
-            inputString += "NREC,11/21/2007,-92.69478264,46.76761193,394.7827512,15,.4'  turned over dirt.,,,1\n";
-            inputString += "NREC,11/21/2007,-92.69233474,46.76590621,394.4374128,13,.3' brusher turnaround area,,,1\n";
-            inputString += "NREC,11/28/2007,-92.63395151,46.72615016,417.0630216,0,w end of span,,,0\n";
-            inputString += "NREC,11/28/2007,-92.63667742,46.72808821,423.2998392,516,unreliable,,,0\n";
-            inputString += "NREC,12/12/2007,-92.56644628,46.67902546,390.698736,49,construction area,,,0\n";
-            inputString += "NREC,12/11/2007,-92.58632704,46.69130319,393.8826768,56, ,,,0\n";
-            inputString += "NREC,11/28/2007,-92.63133786,46.72430701,416.841432,0,e end of span,,,0\n";
-            inputString += ",,,,,,,,,\n";
-            inputString += ",,,,,,,,,\n";
+            //string inputString = "CreatedBy,CreatedDate,POINT_X,POINT_Y,POINT_Z,Measurement,Description,EquipmentID,Accuracy,Probe\n";
+            //inputString += "NREC,11/21/2007,-92.68507821,46.7608733,394.6309608,38, ,,10,0\n";
+            //inputString += "NREC,11/21/2007,-92.68481501,46.76068996,395.9879304,47, ,,5,0\n";
+            //inputString += "NREC,11/21/2007,-92.68457329,46.76053073,395.1192504,24, ,,,0\n";
+            //inputString += "NREC,11/21/2007,-92.68435982,46.76038175,395.566392,45, ,,,0\n";
+            //inputString += "NREC,11/21/2007,-92.69478264,46.76761193,394.7827512,15,.4'  turned over dirt.,,,1\n";
+            //inputString += "NREC,11/21/2007,-92.69233474,46.76590621,394.4374128,13,.3' brusher turnaround area,,,1\n";
+            //inputString += "NREC,11/28/2007,-92.63395151,46.72615016,417.0630216,0,w end of span,,,0\n";
+            //inputString += "NREC,11/28/2007,-92.63667742,46.72808821,423.2998392,516,unreliable,,,0\n";
+            //inputString += "NREC,12/12/2007,-92.56644628,46.67902546,390.698736,49,construction area,,,0\n";
+            //inputString += "NREC,12/11/2007,-92.58632704,46.69130319,393.8826768,56, ,,,0\n";
+            //inputString += "NREC,11/28/2007,-92.63133786,46.72430701,416.841432,0,e end of span,,,0\n";
+            //inputString += ",,,,,,,,,\n";
+            //inputString += ",,,,,,,,,\n";
 
-            Enbridge.DepthOfCover.InputDOCTable docTable = new Enbridge.DepthOfCover.InputDOCTable(inputString, "D4D4472B-FB1E-485B-A550-DCE76F63BC08", "descript");
-            Console.WriteLine(docTable.validationError);
+            //Enbridge.DepthOfCover.InputDOCTable docTable = new Enbridge.DepthOfCover.InputDOCTable(inputString, "D4D4472B-FB1E-485B-A550-DCE76F63BC08", "descript");
+            //Console.WriteLine(docTable.validationError);
 
             //Console.WriteLine(docTable.docRecordList[3].guid);
 
@@ -160,7 +169,7 @@ namespace ConsoleTester
             ////Console.ReadLine();
             //#endregion
 
-            copyDlls();
+            //copyDlls();
             Console.ReadLine();
         }
         #region test_DOC2
@@ -192,6 +201,7 @@ namespace ConsoleTester
                 }
                 catch (IOException ex)
                 {
+                    string msg = ex.Message;
                     Console.WriteLine("----- Not Copied to {0}", copyToPath);
                 }
             }
@@ -206,16 +216,10 @@ namespace ConsoleTester
             }
             catch (IOException ex)
             {
+                string msg = ex.Message;
                 Console.WriteLine(@"----- Not Copied XML to {0}", xmlOutputPath);
             }
         }
         #endregion
-
-
-
-
-
-    }
-
-    
+    }    
 }

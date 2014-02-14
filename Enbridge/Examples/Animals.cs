@@ -11,8 +11,17 @@ namespace Enbridge.Examples
     /// </summary>
     public abstract class Animal
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public int? num_legs = null;
+        /// <summary>
+        /// 
+        /// </summary>
         public bool is_awake;
+        /// <summary>
+        /// 
+        /// </summary>
         public string color;
 
         /// <summary>
@@ -39,23 +48,49 @@ namespace Enbridge.Examples
     /// </summary>
     public interface IAnimalActions
     {
+        /// <summary>
+        /// 
+        /// </summary>
         void talk();
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="distance"></param>
         void move(int distance);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="anyNumber"></param>
+        /// <returns></returns>
         string getColor(int anyNumber);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class Bird : Animal, IAnimalActions
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public bool hasFeathers = true;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="color"></param>
         public Bird(string color)
             : base(color)
         {
             this.num_legs = 2;
         }
-
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             string stringRepresentationOfBird;
@@ -64,17 +99,28 @@ namespace Enbridge.Examples
             return stringRepresentationOfBird;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void talk()
         {
             Console.WriteLine("The {0} bird says tweet", this.color);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="distance"></param>
         public void move(int distance)
         {
-            double x = 10;
             Console.WriteLine("The {0} bird flew {1} feet", this.color, distance);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="anyNumber"></param>
+        /// <returns></returns>
         public string getColor(int anyNumber)
         {
             return this.color;
@@ -83,32 +129,56 @@ namespace Enbridge.Examples
 
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class Cat : Animal, IAnimalActions, IDisposable
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public bool isFurry = true;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="color"></param>
         public Cat(string color)
             : base(color)
         {
             this.num_legs = 4;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void talk()
         {
             Console.WriteLine("The {0} cat says meow", this.color);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="distance"></param>
         public void move(int distance)
         {
-            string something = "a word";
             Console.WriteLine("The {0} cat ran {1} feet", this.color, distance);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="anyNumber"></param>
+        /// <returns></returns>
         public string getColor(int anyNumber)
         {
             return this.color;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void Dispose()
         {
             this.is_awake = false;
@@ -116,6 +186,9 @@ namespace Enbridge.Examples
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public static class SomeStaticMethods
     {
         /// <summary>

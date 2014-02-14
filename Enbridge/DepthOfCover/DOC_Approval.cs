@@ -8,10 +8,19 @@ using System.Threading.Tasks;
 
 namespace Enbridge.DepthOfCover
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class DOC_Approval
     {
         //initialize class members
+        /// <summary>
+        /// 
+        /// </summary>
         public Dictionary<string, DOC_PointGroup_Records> toApproveDict = new Dictionary<string, DOC_PointGroup_Records>();
+        /// <summary>
+        /// 
+        /// </summary>
         public string pointGroupRecordsJSON;
 
         /// <summary>
@@ -118,11 +127,23 @@ namespace Enbridge.DepthOfCover
             return pointGroupRecordsJSON;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pointID"></param>
+        /// <returns></returns>
         public string getGroupJSON(string pointID)
         {
             return this.toApproveDict[pointID].getJSON();
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pointID"></param>
+        /// <param name="userID"></param>
+        /// <returns></returns>
         public string approveGroup(string pointID, string userID)
         {
             this.toApproveDict[pointID].approve(userID);
@@ -130,6 +151,11 @@ namespace Enbridge.DepthOfCover
             return this.pointGroupRecordsJSON;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pointID"></param>
+        /// <returns></returns>
         public string deleteGroup(string pointID)
         {
             if (toApproveDict.Keys.Contains(pointID))

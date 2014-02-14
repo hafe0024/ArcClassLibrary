@@ -53,6 +53,10 @@ namespace Enbridge.Geometry
             this.Y = yMerc;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="add"></param>
         public void addOne(double add)
         {
             this.X += add;

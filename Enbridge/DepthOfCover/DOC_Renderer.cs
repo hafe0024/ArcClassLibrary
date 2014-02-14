@@ -9,8 +9,15 @@ using System.Windows.Media;
 
 namespace Enbridge.DepthOfCover
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class DOC_Renderer
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public static ClassBreaksRenderer MakeDOCRenderer()
         {
             double symbolSize = 10;

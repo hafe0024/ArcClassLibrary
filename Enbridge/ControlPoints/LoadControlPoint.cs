@@ -9,8 +9,19 @@ using System.Data.SqlClient;
 
 namespace Enbridge.ControlPoints
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class LoadControlPoint
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="loadedBy"></param>
+        /// <param name="mapName"></param>
+        /// <param name="coordString"></param>
+        /// <param name="tempFilePath"></param>
+        /// <returns></returns>
         public static bool loadMap(string loadedBy, string mapName, string coordString, string tempFilePath)
         {
             string tempDirectory = Path.GetDirectoryName(tempFilePath);
@@ -104,6 +115,11 @@ namespace Enbridge.ControlPoints
             return true;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="extents"></param>
+        /// <returns></returns>
         public static string getControlPoints(string extents = null)
         {
             string outputGeoJson = "{\"type\": \"FeatureCollection\",\"features\": []}";
@@ -167,6 +183,11 @@ namespace Enbridge.ControlPoints
             return outputGeoJson;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="controlPointEventID"></param>
+        /// <returns></returns>
         public static string getControlPointsThumb(string controlPointEventID)
         {
             string outputString = "";
@@ -195,7 +216,11 @@ namespace Enbridge.ControlPoints
             return outputString;
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="mapEventID"></param>
+        /// <returns></returns>
         public static string getControlPointMapThumb(string mapEventID)
         {
             mapEventID = mapEventID.ToUpper();
@@ -225,6 +250,11 @@ namespace Enbridge.ControlPoints
             return outputString;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="mapEventID"></param>
         public static void approveControlPointMap(string username, string mapEventID)
         {
             mapEventID = mapEventID.ToUpper();
@@ -252,6 +282,10 @@ namespace Enbridge.ControlPoints
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="mapEventID"></param>
         public static void discardControlPointMap(string mapEventID)
         {
             mapEventID = mapEventID.ToUpper();
@@ -278,6 +312,12 @@ namespace Enbridge.ControlPoints
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="controlPointEvtId"></param>
+        /// <param name="ext"></param>
+        /// <returns></returns>
         public static byte[] getControlPointFileData(string controlPointEvtId, out string ext)
         {
             byte[] fileData = null;

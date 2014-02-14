@@ -10,37 +10,112 @@ using System.Threading.Tasks;
 
 namespace Enbridge.Drawings.AlignmentSheets
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class AlignmentSheetRecord
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public string LLName;
+        /// <summary>
+        /// 
+        /// </summary>
         public string LLId;
+        /// <summary>
+        /// 
+        /// </summary>
         public string Extension;
+        /// <summary>
+        /// 
+        /// </summary>
         public string DrawingID;
+        /// <summary>
+        /// 
+        /// </summary>
         public int NeedsUpdate;
+        /// <summary>
+        /// 
+        /// </summary>
         public regionBounds details;
+        /// <summary>
+        /// 
+        /// </summary>
         public regionBounds plan;
+        /// <summary>
+        /// 
+        /// </summary>
         public regionBounds terrain;
+        /// <summary>
+        /// 
+        /// </summary>
         public regionBounds rightBorder;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public double MatchStartPixX;
+        /// <summary>
+        /// 
+        /// </summary>
         public double MatchStartPixY;
+        /// <summary>
+        /// 
+        /// </summary>
         public double MatchEndPixX;
+        /// <summary>
+        /// 
+        /// </summary>
         public double MatchEndPixY;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public double MatchStartStn;
+        /// <summary>
+        /// 
+        /// </summary>
         public double MatchEndStn;
+        /// <summary>
+        /// 
+        /// </summary>
         public double MP_KP_Start;
+        /// <summary>
+        /// 
+        /// </summary>
         public double MP_KP_End;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string pngPlanPath = null;
 
+        /// <summary>
+        /// 
+        /// </summary>
         Dictionary<string, double> planCoords = null;
+        /// <summary>
+        /// 
+        /// </summary>
         Dictionary<string, double[]> planBounds = null;
+        /// <summary>
+        /// 
+        /// </summary>
         Dictionary<string, double> mercCoords = null;
+        /// <summary>
+        /// 
+        /// </summary>
         public bool trimBorder = false;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public bool sheetReady = true;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Dictionary<string, string> directoryDict = new Dictionary<string, string>();
 
 
@@ -49,6 +124,7 @@ namespace Enbridge.Drawings.AlignmentSheets
         /// Iteration is handled outside of the constructor
         /// </summary>
         /// <param name="reader"></param>
+        /// <param name="joinedTable"></param>
         public AlignmentSheetRecord(SqlDataReader reader, bool joinedTable)
         {
             if (joinedTable)
@@ -138,7 +214,18 @@ namespace Enbridge.Drawings.AlignmentSheets
             }
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="drawingId"></param>
+        /// <param name="MP_KP_Start"></param>
+        /// <param name="MP_KP_End"></param>
+        /// <param name="MatchStartStn"></param>
+        /// <param name="MatchEndStn"></param>
+        /// <param name="MatchStartPixX"></param>
+        /// <param name="MatchStartPixY"></param>
+        /// <param name="MatchEndPixX"></param>
+        /// <param name="MatchEndPixY"></param>
         public AlignmentSheetRecord(string drawingId, double MP_KP_Start, double MP_KP_End, double MatchStartStn, double MatchEndStn,
                             double MatchStartPixX, double MatchStartPixY, double MatchEndPixX, double MatchEndPixY)
         {
@@ -154,6 +241,10 @@ namespace Enbridge.Drawings.AlignmentSheets
             this.sheetReady = true;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="drawingId"></param>
         public AlignmentSheetRecord(string drawingId)
         {
             this.DrawingID = drawingId;
@@ -552,6 +643,10 @@ namespace Enbridge.Drawings.AlignmentSheets
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public string ToJSON()
         {
             string outString = "{";
@@ -577,6 +672,11 @@ namespace Enbridge.Drawings.AlignmentSheets
             return outString;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="clearValues"></param>
+        /// <returns></returns>
         public string saveAlignmentLocationInfo(bool clearValues)
         {
             string returnString = "";
@@ -657,11 +757,30 @@ namespace Enbridge.Drawings.AlignmentSheets
     /// </summary>
     public struct regionBounds
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public double left;
+        /// <summary>
+        /// 
+        /// </summary>
         public double top;
+        /// <summary>
+        /// 
+        /// </summary>
         public double right;
+        /// <summary>
+        /// 
+        /// </summary>
         public double bottom;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="top"></param>
+        /// <param name="right"></param>
+        /// <param name="bottom"></param>
         public regionBounds(double left, double top, double right, double bottom)
         {
             this.left = left;

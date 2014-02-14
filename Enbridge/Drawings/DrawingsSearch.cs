@@ -14,6 +14,9 @@ using System.Threading;
 
 namespace Enbridge.Drawings
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class DrawingsSearch
     {
         /// <summary>
@@ -574,9 +577,10 @@ namespace Enbridge.Drawings
         }
 
         /// <summary>
-        /// Get file data from drawing id
+        /// 
         /// </summary>
         /// <param name="drawingID"></param>
+        /// <param name="ext"></param>
         /// <returns></returns>
         public static byte[] getDwgFileData(string drawingID, out string ext)
         {

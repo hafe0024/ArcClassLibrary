@@ -1,7 +1,4 @@
-﻿/// <summary>
-/// Summary description for CSV_ReadWrite
-/// </summary>
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -13,6 +10,9 @@ namespace Enbridge.Utilities
     /// </summary>
     public class CsvRow : List<string>
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public string LineText { get; set; }
     }
 
@@ -21,11 +21,19 @@ namespace Enbridge.Utilities
     /// </summary>
     public class CsvFileWriter : StreamWriter
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="stream"></param>
         public CsvFileWriter(Stream stream)
             : base(stream)
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="filename"></param>
         public CsvFileWriter(string filename)
             : base(filename)
         {
@@ -62,11 +70,19 @@ namespace Enbridge.Utilities
     /// </summary>
     public class CsvFileReader : StreamReader
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="stream"></param>
         public CsvFileReader(Stream stream)
             : base(stream)
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="filename"></param>
         public CsvFileReader(string filename)
             : base(filename)
         {

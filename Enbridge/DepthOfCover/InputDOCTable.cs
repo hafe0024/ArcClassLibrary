@@ -27,20 +27,34 @@ namespace Enbridge.DepthOfCover
         /// </summary>
         public string routeEventId;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string pointGroupId;
-
+        /// <summary>
+        /// 
+        /// </summary>
         public DateTime groupCreatedDate;
-
+        /// <summary>
+        /// 
+        /// </summary>
         public string routeName;
-
+        /// <summary>
+        /// 
+        /// </summary>
         public string groupDescription;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Dictionary<string, double> extent;
 
         /// <summary>
         /// Input Depth of Cover table object constructor
         /// </summary>
-        /// <param name="inputString">string representation of CSV input file</param>
+        /// <param name="inputString"></param>
+        /// <param name="lineLoopEventId"></param>
+        /// <param name="groupDescription"></param>
         public InputDOCTable(string inputString, string lineLoopEventId, string groupDescription)
         {
             this.pointGroupId = "{" + Guid.NewGuid().ToString().ToUpper() + "}";

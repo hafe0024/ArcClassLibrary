@@ -7,12 +7,24 @@ using System.Threading.Tasks;
 
 namespace Enbridge.GeoJSON
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [Serializable]
     public class JSONGeometry
     {
+        /// <summary>
+        /// 
+        /// </summary>
         protected string type;
+        /// <summary>
+        /// 
+        /// </summary>
         protected string coordinates;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public JSONGeometry()
         {
             type = "null";
@@ -29,14 +41,25 @@ namespace Enbridge.GeoJSON
         //    }
         //}
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return "\"geometry\":{\"type\":" + type + ",\"coordinates\":" + coordinates + "}";
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class JSONPointGeometry : JSONGeometry
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="geometryString"></param>
         public JSONPointGeometry(string geometryString)
         {
             geometryString = geometryString.Replace("(", "").Replace(")", "");
@@ -49,8 +72,15 @@ namespace Enbridge.GeoJSON
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class JSONMultiPointGeometry : JSONGeometry
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="geometryString"></param>
         public JSONMultiPointGeometry(string geometryString)
         {
             List<string> coordsList = new List<string>();

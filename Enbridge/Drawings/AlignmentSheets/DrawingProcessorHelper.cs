@@ -6,20 +6,55 @@ using System.Threading.Tasks;
 
 namespace Enbridge.Drawings.AlignmentSheets
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class DrawingProcessorHelper: IDisposable
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public ESRI.ArcGIS.Geoprocessor.Geoprocessor gp;
+        /// <summary>
+        /// 
+        /// </summary>
         public ESRI.ArcGIS.Geometry.IPointCollection4 sourcePoints;
+        /// <summary>
+        /// 
+        /// </summary>
         public ESRI.ArcGIS.Geometry.IPointCollection4 targetPoints;
+        /// <summary>
+        /// 
+        /// </summary>
         public ESRI.ArcGIS.DataManagementTools.DefineProjection defineProj;
+        /// <summary>
+        /// 
+        /// </summary>
         public ESRI.ArcGIS.Geodatabase.IWorkspaceFactory workspaceFact;
+        /// <summary>
+        /// 
+        /// </summary>
         public ESRI.ArcGIS.DataSourcesRaster.IRasterWorkspace rastWorkspace = null;
+        /// <summary>
+        /// 
+        /// </summary>
         public ESRI.ArcGIS.Geodatabase.IRasterDataset rasDataset = null;
+        /// <summary>
+        /// 
+        /// </summary>
         public ESRI.ArcGIS.Geodatabase.IRaster rast = null;
+        /// <summary>
+        /// 
+        /// </summary>
         public ESRI.ArcGIS.DataSourcesRaster.IRasterGeometryProc rasterPropc;
+        /// <summary>
+        /// 
+        /// </summary>
         private Enbridge.ArcObjects.LicenseInit licenseInit;
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         public DrawingProcessorHelper()
         {
             this.licenseInit = new Enbridge.ArcObjects.LicenseInit();
@@ -50,6 +85,9 @@ namespace Enbridge.Drawings.AlignmentSheets
  
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void Dispose()
         {
             licenseInit.shutdown();

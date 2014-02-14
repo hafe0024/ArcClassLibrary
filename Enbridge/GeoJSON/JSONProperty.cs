@@ -13,7 +13,13 @@ namespace Enbridge.GeoJSON
     [Serializable]
     public class JSONProperty
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public string name;
+        /// <summary>
+        /// 
+        /// </summary>
         public object property;
 
         /// <summary>
@@ -57,13 +63,16 @@ namespace Enbridge.GeoJSON
             this.property = string.Format("\"{0}\"", objectString);
         }
 
+
+
         /// <summary>
-        /// Overridden to string method for ToString</value>
+        /// Overridden to string method for ToString
         /// </summary>
-        /// <returns>appropriate format "name": '<value>'</returns>
+        /// <returns>appropriate format "name": "value"</returns>
         public override string ToString()
         {
             return "\"" + name + "\":" + property;
         }
     }
 }
+

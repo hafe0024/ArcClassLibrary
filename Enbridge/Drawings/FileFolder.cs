@@ -13,12 +13,31 @@ namespace Enbridge.Drawings
     /// </summary>
     public class FileFolder
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public List<DwgRecord> files;
+        /// <summary>
+        /// 
+        /// </summary>
         public Dictionary<string, FileFolder> folders;
+        /// <summary>
+        /// 
+        /// </summary>
         public string id;
+        /// <summary>
+        /// 
+        /// </summary>
         public string name;
+        /// <summary>
+        /// 
+        /// </summary>
         public int version = 0;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
         public FileFolder(string name)
         {
             files = new List<DwgRecord>();

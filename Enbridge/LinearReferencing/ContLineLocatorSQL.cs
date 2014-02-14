@@ -8,16 +8,43 @@ using System.Threading.Tasks;
 
 namespace Enbridge.LinearReferencing
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [Serializable]
     public class ContLineLocatorSQL
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public Dictionary<string, StationSeriesSQL> stnSeriesDict = new Dictionary<string, StationSeriesSQL>();
+        /// <summary>
+        /// 
+        /// </summary>
         public List<ContLinePoint> pointList = new List<ContLinePoint>();
+        /// <summary>
+        /// 
+        /// </summary>
         public double startMP = 0;
+        /// <summary>
+        /// 
+        /// </summary>
         public double minLat = 10E100;
+        /// <summary>
+        /// 
+        /// </summary>
         public double minLon = 10E100;
+        /// <summary>
+        /// 
+        /// </summary>
         public double maxLat = -10E100;
+        /// <summary>
+        /// 
+        /// </summary>
         public double maxLon = -10E100;
+        /// <summary>
+        /// 
+        /// </summary>
         public List<Valve> valveList = new List<Valve>();
 
 
@@ -375,7 +402,11 @@ namespace Enbridge.LinearReferencing
         /// Get the stationing and location from the MP
         /// </summary>
         /// <param name="MP"></param>
-        /// <returns>stationing</returns>
+        /// <param name="meas"></param>
+        /// <param name="X"></param>
+        /// <param name="Y"></param>
+        /// <param name="Z"></param>
+        /// <returns></returns>
         public double getStnFromMP(double MP, out double meas, out double X, out double Y, out double Z)
         {
             int index1 = -1;
@@ -477,9 +508,6 @@ namespace Enbridge.LinearReferencing
                 return pointList[pointList.Count - 1].MP;
             }
 
-            double lastStnNotDiv = 0;
-            double theStn = 0;
-
             for (int i = 1; i < pointList.Count - 2; i++)
             {
                 if (pointList[i].isDiversion)
@@ -517,6 +545,7 @@ namespace Enbridge.LinearReferencing
         /// <param name="MP"></param>
         /// <param name="X"></param>
         /// <param name="Y"></param>
+        /// <param name="Z"></param>
         /// <returns>stationing</returns>
         public double getStnMPFromMeasure(double measure, out double MP, out double X, out double Y, out double Z)
         {
@@ -562,6 +591,15 @@ namespace Enbridge.LinearReferencing
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="station"></param>
+        /// <param name="mp"></param>
+        /// <param name="throughPutbbld"></param>
+        /// <param name="minutesToClose"></param>
+        /// <param name="remoteOnly"></param>
+        /// <returns></returns>
         public VolumeOutResult getVolumeOut(double? station = null, double? mp = null,
             double? throughPutbbld = null, double? minutesToClose = null, bool remoteOnly = false)
         {
@@ -912,5 +950,63 @@ namespace Enbridge.LinearReferencing
             result.makeExtent();
             return result;
         }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="startMeas"></param>
+        /// <param name="endMeas"></param>
+        /// <param name="stnStart"></param>
+        /// <param name="stnEnd"></param>
+        /// <returns>linestring representation of the geometry</returns>
+        public string makeSegmentLineString(double startMeas, double endMeas, out double stnStart, out double stnEnd)
+        {
+            int lowIndex = -1;
+            int highIndex = -1;
+
+            for (int i = 1; i < this.pointList.Count; i++)
+            {
+                if (this.pointList[i].meas > startMeas)
+                {
+                    lowIndex = i - 1;
+                    highIndex = i;
+                    break;
+                }
+            }
+
+            if (lowIndex == -1)
+            {
+                throw new Exception("out of range");
+            }
+
+            while (true)
+            {
+                //Console.WriteLine("here");
+                if (this.pointList[highIndex].meas > endMeas)
+                {
+                    break;
+                }
+                highIndex++;
+            }
+
+            List<string> coordsList = new List<string>();
+
+            double X, Y, MP, Z;
+            stnStart = this.getStnMPFromMeasure(startMeas, out MP, out X, out Y, out Z);
+
+            coordsList.Add(string.Format("{0} {1} {2} {3}", X, Y, Z, startMeas));
+
+
+            for (int i = lowIndex + 1; i < highIndex; i++)
+            {
+                coordsList.Add(string.Format("{0} {1} {2} {3}", this.pointList[i].X, this.pointList[i].Y, this.pointList[i].Z, this.pointList[i].meas));
+            }
+
+            stnEnd = this.getStnMPFromMeasure(endMeas, out MP, out X, out Y, out Z);
+            coordsList.Add(string.Format("{0} {1} {2} {3}", X, Y, Z, endMeas));
+            return "LINESTRING (" + string.Join(",", coordsList) + ")";
+        }
     }
 }
+

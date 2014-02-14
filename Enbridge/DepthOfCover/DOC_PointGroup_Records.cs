@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace Enbridge.DepthOfCover
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class DOC_PointGroup_Records
     {
         private string pointGroup;

@@ -8,12 +8,24 @@ using System.Threading.Tasks;
 
 namespace Enbridge.GeoJSON
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [Serializable]
     public class JSONFeature
     {
-        JSONGeometry geom;
-        List<JSONProperty> propertyList;
+        /// <summary>
+        /// 
+        /// </summary>
+        public JSONGeometry geom;
+        /// <summary>
+        /// 
+        /// </summary>
+        public List<JSONProperty> propertyList;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public JSONFeature()
         {
             this.geom = new JSONGeometry();
@@ -49,6 +61,11 @@ namespace Enbridge.GeoJSON
             }            
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="property"></param>
         public void addProperty(string name, object property)
         {
             propertyList.Add(new JSONProperty(name, property));

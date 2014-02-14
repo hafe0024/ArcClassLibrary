@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Enbridge.DepthOfCover
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class SelectDOC
     {
         /// <summary>

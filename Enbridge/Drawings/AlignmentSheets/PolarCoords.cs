@@ -6,31 +6,59 @@ using System.Threading.Tasks;
 
 namespace Enbridge.Drawings.AlignmentSheets
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class PolarCoords
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public double distance
         {
             get;
             private set;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public double heading
         {
             get;
             private set;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         private double centerX;
+        /// <summary>
+        /// 
+        /// </summary>
         private double centerY;
+        /// <summary>
+        /// 
+        /// </summary>
         public double cartesianX
         {
             get;
             private set;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public double cartesianY
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="centerX"></param>
+        /// <param name="centerY"></param>
+        /// <param name="X"></param>
+        /// <param name="Y"></param>
         public PolarCoords(double centerX, double centerY, double X, double Y)
         {
             this.centerX = centerX;
@@ -42,12 +70,20 @@ namespace Enbridge.Drawings.AlignmentSheets
             cartesianY = this.centerY + Y;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="scalar"></param>
         public void scaleDistance(double scalar)
         {
             distance *= scalar;
             this.updateCoordinates();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="angleDegress"></param>
         public void rotate(double angleDegress)
         {
             heading += angleDegress;
@@ -69,6 +105,10 @@ namespace Enbridge.Drawings.AlignmentSheets
             return Math.Sqrt(a * a + b * b);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return string.Format("Dist: {0}   Heading: {1}  X: {2}   Y: {3}", this.distance, this.heading, this.cartesianX, this.cartesianY);

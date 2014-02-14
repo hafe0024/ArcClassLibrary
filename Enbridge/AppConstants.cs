@@ -6,29 +6,70 @@ using System.Threading.Tasks;
 
 namespace Enbridge
 {
-
+    /// <summary>
+    /// 
+    /// </summary>
     [Serializable]
     public static class AppConstants
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public const string ALIGNMENT_SHEETS_ROOT_DIRECTORY = @"S:\AlignmentSheets";
+        /// <summary>
+        /// 
+        /// </summary>
         public const string DRAWINGS_ROOT_DIRECTORY = @"V:\Drawings - Field Access";
 
         //testing features
+        /// <summary>
+        /// 
+        /// </summary>
         public const string TEST_GDB_PATH = @"C:\TEMP\Scratch.gdb";
 
         //DOC constants
+        /// <summary>
+        /// 
+        /// </summary>
         public const string DOC_WORKING_VERSION = "sde.WORKING";
+        /// <summary>
+        /// 
+        /// </summary>
         public const string DOC_VIEW = "sde.DEPTHOFCOVER_EVW";
+        /// <summary>
+        /// 
+        /// </summary>
         public const string DOC_INCREM_VIEW = "sde.DEPTHOFCOVERINCREMENTAL_EVW";
+        /// <summary>
+        /// 
+        /// </summary>
         public const string DOC_POINT_GROUP_VIEW = "sde.DOC_POINT_GROUP_EVW";
 
         //Connection strings
+        /// <summary>
+        /// 
+        /// </summary>
         public const string CONN_STRING_AUTH = @"server=SUPGIS01\GISSERVER1;uid=data_write;pwd=D.A.T.A.R.W!@#123;database=webauth";
+        /// <summary>
+        /// 
+        /// </summary>
         public const string CONN_STRING_PODS = @"server=SUPGIS01\GISSERVER1;uid=data_read;pwd=D.A.T.A.R!@#123;database=PODS";
+        /// <summary>
+        /// 
+        /// </summary>
         public const string CONN_STRING_DOC = @"server=SUPGIS01\GISSERVER1;uid=data_write;pwd=D.A.T.A.R.W!@#123;database=DOC";
+        /// <summary>
+        /// 
+        /// </summary>
         public const string CONN_STRING_SUPSQL_ARCGIS = @"server=supsql01\fldsrvcnrth03;uid=supgis_data;pwd=MWRgoan1;database=ARCGIS";
 
+        /// <summary>
+        /// 
+        /// </summary>
         public const string IMAGE_MAGICK_EXE = @"C:\Program Files (x86)\ImageMagick-6.8.6-Q16\convert.exe";
+        /// <summary>
+        /// 
+        /// </summary>
         public const string GHOST_SCRIPT_EXE = @"C:\Program Files (x86)\gs\gs9.07\bin\gswin32c.exe";
 
         private static readonly Dictionary<string, string> lineLoopNames
@@ -74,6 +115,11 @@ namespace Enbridge
             };
 
         //get line name from event id
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="llID"></param>
+        /// <returns></returns>
         public static string GetLineName(string llID)
         {
             try
@@ -97,6 +143,11 @@ namespace Enbridge
             return "";
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fileExtension"></param>
+        /// <returns></returns>
         public static string ReturnExtensionType(string fileExtension)
         {
             fileExtension = fileExtension.ToLower();

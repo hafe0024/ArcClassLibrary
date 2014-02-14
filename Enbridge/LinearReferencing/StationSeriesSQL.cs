@@ -6,27 +6,85 @@ using System.Threading.Tasks;
 
 namespace Enbridge.LinearReferencing
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [Serializable]
     public class StationSeriesSQL
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public string fromStnSeries = null;
+        /// <summary>
+        /// 
+        /// </summary>
         public string toStnSeries = null;
+        /// <summary>
+        /// 
+        /// </summary>
         public string evntId = null;
+        /// <summary>
+        /// 
+        /// </summary>
         public List<ContLinePoint> pointList = new List<ContLinePoint>();
+        /// <summary>
+        /// 
+        /// </summary>
         public bool isDiv;
+        /// <summary>
+        /// 
+        /// </summary>
         public string stnSeriesName;
+        /// <summary>
+        /// 
+        /// </summary>
         public string llid;
+        /// <summary>
+        /// 
+        /// </summary>
         public double startM;
+        /// <summary>
+        /// 
+        /// </summary>
         public double minLat = 10E100;
+        /// <summary>
+        /// 
+        /// </summary>
         public double minLon = 10E100;
+        /// <summary>
+        /// 
+        /// </summary>
         public double maxLat = -10E100;
+        /// <summary>
+        /// 
+        /// </summary>
         public double maxLon = -10E100;
+        /// <summary>
+        /// 
+        /// </summary>
         public double diameter;
+        /// <summary>
+        /// 
+        /// </summary>
         public double wallThickness;
+        /// <summary>
+        /// 
+        /// </summary>
         public string evntID;
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="evntID"></param>
+        /// <param name="llid"></param>
+        /// <param name="stnSeriesName"></param>
+        /// <param name="fromStnSeries"></param>
+        /// <param name="toStnSeries"></param>
+        /// <param name="shpString"></param>
+        /// <param name="diameter"></param>
+        /// <param name="wallthickness"></param>
         public StationSeriesSQL(string evntID, string llid, string stnSeriesName, string fromStnSeries, 
             string toStnSeries, string shpString, string diameter, string wallthickness)
         {

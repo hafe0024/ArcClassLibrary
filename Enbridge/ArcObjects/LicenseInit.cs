@@ -5,16 +5,23 @@ using System.Web;
 using ESRI.ArcGIS.esriSystem;
 using ESRI.ArcGIS;
 
-/// <summary>
-/// Summary description for LicenseInit
-/// </summary>
+
 namespace Enbridge.ArcObjects
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class LicenseInit: IDisposable
     {
         private IAoInitialize I_LicenseInitializer;
+        /// <summary>
+        /// 
+        /// </summary>
         public bool isInitialized = false;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public LicenseInit()
         {
 
@@ -55,16 +62,26 @@ namespace Enbridge.ArcObjects
             //I_LicenseInitializer.Initialize(esriLicenseProductCode.esriLicenseProductCodeStandard);
         //}
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public string getInitializedProduct()
         {
             return I_LicenseInitializer.InitializedProduct().ToString();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void shutdown()
         {
             //I_LicenseInitializer.Shutdown();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void Dispose()
         {
             //this.shutdown();

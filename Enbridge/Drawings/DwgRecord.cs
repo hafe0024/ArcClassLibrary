@@ -12,13 +12,34 @@ namespace Enbridge.Drawings
     /// </summary>
     public class DwgRecord
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public string dwgName;
+        /// <summary>
+        /// 
+        /// </summary>
         public int version;
+        /// <summary>
+        /// 
+        /// </summary>
         public string geom;
+        /// <summary>
+        /// 
+        /// </summary>
         public string id;
+        /// <summary>
+        /// 
+        /// </summary>
         public string zoom;
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="version"></param>
+        /// <param name="geomString"></param>
+        /// <param name="zoom"></param>
         public DwgRecord(string filePath, int version, string geomString, string zoom)
         {
             string fileName = System.IO.Path.GetFileNameWithoutExtension(filePath);
@@ -30,7 +51,10 @@ namespace Enbridge.Drawings
             this.zoom = (string.IsNullOrEmpty(zoom) ? "null" : zoom);
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return "{" + string.Format("\"id\":\"{0}\",\"name\":\"{1}\",\"version\":{2},\"geom\":{3},\"zoom\": {4}",

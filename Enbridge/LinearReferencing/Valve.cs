@@ -6,16 +6,43 @@ using System.Threading.Tasks;
 
 namespace Enbridge.LinearReferencing
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [Serializable]
     public class Valve: IComparable
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public string eventID;
+        /// <summary>
+        /// 
+        /// </summary>
         public string seriesEventID;
+        /// <summary>
+        /// 
+        /// </summary>
         public double station;
+        /// <summary>
+        /// 
+        /// </summary>
         public double measure;
+        /// <summary>
+        /// 
+        /// </summary>
         public double x;
+        /// <summary>
+        /// 
+        /// </summary>
         public double y;
+        /// <summary>
+        /// 
+        /// </summary>
         public string typeCL;
+        /// <summary>
+        /// 
+        /// </summary>
         public string functionCL;
         
         
@@ -42,6 +69,11 @@ namespace Enbridge.LinearReferencing
             this.functionCL = functionCL;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public int CompareTo(object obj)
         {
             Valve v = obj as Valve;

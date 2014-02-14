@@ -55,7 +55,7 @@
     </Reference>
     <Reference Include="ESRI.ArcGIS.Geodatabase, Version=10.2.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
       <HintPath>U:\DotNet\ESRI.ArcGIS.Geodatabase.dll</HintPath>
     </Reference>
     <Reference Include="ESRI.ArcGIS.Geometry, Version=10.2.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=MSIL">
@@ -69,7 +69,7 @@
     </Reference>
     <Reference Include="ESRI.ArcGIS.System, Version=10.2.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
       <HintPath>U:\DotNet\ESRI.ArcGIS.System.dll</HintPath>
     </Reference>
     <Reference Include="ESRI.ArcGIS.Version, Version=10.2.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=MSIL">
@@ -104,6 +104,7 @@
     <Compile Include="DepthOfCover\DOC_Record_Temp.cs" />
     <Compile Include="DepthOfCover\DOC_Renderer.cs" />
     <Compile Include="DepthOfCover\InputDOCTable.cs" />
+    <Compile Include="DepthOfCover\UpdateDocPointsSegments.cs" />
     <Compile Include="DepthOfCover\SelectDOC.cs" />
     <Compile Include="Drawings\AlignmentSheets\AlignmentSheetRecord.cs" />
     <Compile Include="Drawings\AlignmentSheets\AlignmentSheetsJSON.cs" />

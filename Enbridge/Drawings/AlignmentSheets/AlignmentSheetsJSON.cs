@@ -8,8 +8,15 @@ using System.Threading.Tasks;
 
 namespace Enbridge.Drawings.AlignmentSheets
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class AlignmentSheetsJSON
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public static string getAlignmentJSON()
         {
             Dictionary<string, List<AlignmentSheetRecord>> aligmentSheetList = new Dictionary<string, List<AlignmentSheetRecord>>();

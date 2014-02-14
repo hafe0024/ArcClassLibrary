@@ -18,21 +18,53 @@ namespace Enbridge.DepthOfCover
     public class DOC_Validator
     {
         private Thread worker;
+        /// <summary>
+        /// 
+        /// </summary>
         public bool isValid = false;
         private double minLat, maxLat, minLon, maxLon, minMeas, maxMeas, minElev, maxElev, minAcc, maxAcc;
         private bool hasAccuracy = false;
         private bool hasElevation = false;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string creatorValid = "Point Creator Valid";
+        /// <summary>
+        /// 
+        /// </summary>
         public string dateValid = "Date Format Valid";
+        /// <summary>
+        /// 
+        /// </summary>
         public string latValid = "";
+        /// <summary>
+        /// 
+        /// </summary>
         public string lonValid = "";
+        /// <summary>
+        /// 
+        /// </summary>
         public string measureValid = "";
+        /// <summary>
+        /// 
+        /// </summary>
         public string elevValid = "";
+        /// <summary>
+        /// 
+        /// </summary>
         public string equipmentValid = "Equipment List Valid";
+        /// <summary>
+        /// 
+        /// </summary>
         public string accuracyValid = "Accuracy Attribute N/A";
+        /// <summary>
+        /// 
+        /// </summary>
         public string probeValid = "Probe Atribute N/A";
-
+        /// <summary>
+        /// 
+        /// </summary>
         public List<docRecord_Temp> docRecordList;
         private string lineLoopID;
         private bool fullUpload;
@@ -41,7 +73,9 @@ namespace Enbridge.DepthOfCover
         /// <summary>
         /// Constructor, takes the csv path string as an input
         /// </summary>
-        /// <param name="inputCSV"></param>
+        /// <param name="loadedBy"></param>
+        /// <param name="lineLoopID"></param>
+        /// <param name="fullUpload"></param>
         public DOC_Validator(string loadedBy, string lineLoopID, bool fullUpload = false)
         {
             docRecordList = new List<docRecord_Temp>();
@@ -57,6 +91,12 @@ namespace Enbridge.DepthOfCover
             this.loadedBy = loadedBy;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="inputCSV"></param>
+        /// <param name="equipmentList"></param>
+        /// <returns></returns>
         public int checkInputs(string inputCSV, List<int> equipmentList = null)
         {
             isValid = true;
@@ -305,13 +345,8 @@ namespace Enbridge.DepthOfCover
         }
 
         /// <summary>
-        /// Do the work of loading the features
+        /// 
         /// </summary>
-        /// <param name="docDataConnection"></param>
-        /// <param name="featureClassName"></param>
-        /// <param name="versionName"></param>
-        /// <param name="lineLoopID"></param>
-        /// <param name="fullUpload"></param>
         /// <returns></returns>
         private bool loadFile()
         {

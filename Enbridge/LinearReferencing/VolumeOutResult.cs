@@ -8,26 +8,76 @@ using Enbridge.Utilities;
 
 namespace Enbridge.LinearReferencing
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [Serializable]
     public class VolumeOutResult
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public Dictionary<string, double> upstreamBound;
+        /// <summary>
+        /// 
+        /// </summary>
         public Dictionary<string, double> downstreamBound;
+        /// <summary>
+        /// 
+        /// </summary>
         public Dictionary<string, double> upstreamBreak;
+        /// <summary>
+        /// 
+        /// </summary>
         public Dictionary<string, double> downstreamBreak;
+        /// <summary>
+        /// 
+        /// </summary>
         public Dictionary<string, double> upstreamContribution;
+        /// <summary>
+        /// 
+        /// </summary>
         public Dictionary<string, double> downstreamContribution;
+        /// <summary>
+        /// 
+        /// </summary>
         public Dictionary<string, double> ruptureLocation;
+        /// <summary>
+        /// 
+        /// </summary>
         public Dictionary<string, double> extent;
+        /// <summary>
+        /// 
+        /// </summary>
         public Dictionary<string, double> extentMercator;
+        /// <summary>
+        /// 
+        /// </summary>
         public double vOut;
+        /// <summary>
+        /// 
+        /// </summary>
         public double vStorage;
+        /// <summary>
+        /// 
+        /// </summary>
         public double vAssumed;
+        /// <summary>
+        /// 
+        /// </summary>
         public double vTotal;
+        /// <summary>
+        /// 
+        /// </summary>
         public double percentAccounted;
+        /// <summary>
+        /// 
+        /// </summary>
         public double dynamicContribution;
 
-        
+        /// <summary>
+        /// 
+        /// </summary>
         public VolumeOutResult()
         {
             upstreamBound = new Dictionary<string, double>();
@@ -48,7 +98,9 @@ namespace Enbridge.LinearReferencing
 
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         public void makeExtent()
         {
             if (upstreamBound["X"] <= downstreamBound["X"])
@@ -83,6 +135,10 @@ namespace Enbridge.LinearReferencing
             extentMercator["ymax"] = yMaxMerc;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public string getJSON()
         {
             return this.ToJSON();
