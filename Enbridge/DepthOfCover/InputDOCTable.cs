@@ -22,6 +22,8 @@ namespace Enbridge.DepthOfCover
         /// List of depth of cover records
         /// </summary>
         public List<ESRI.ArcGIS.Client.Graphic> docGraphicList = new List<ESRI.ArcGIS.Client.Graphic>();
+
+        public List<DocPoint> docPointList = new List<DocPoint>();
         /// <summary>
         /// The route or lineloop event id
         /// </summary>
@@ -44,6 +46,8 @@ namespace Enbridge.DepthOfCover
         /// </summary>
         public string groupDescription;
 
+        public string username;
+
         /// <summary>
         /// 
         /// </summary>
@@ -55,7 +59,7 @@ namespace Enbridge.DepthOfCover
         /// <param name="inputString"></param>
         /// <param name="lineLoopEventId"></param>
         /// <param name="groupDescription"></param>
-        public InputDOCTable(string inputString, string lineLoopEventId, string groupDescription)
+        public InputDOCTable(string inputString, string lineLoopEventId, string groupDescription, string username)
         {
             this.pointGroupId = "{" + Guid.NewGuid().ToString().ToUpper() + "}";
 
@@ -66,6 +70,8 @@ namespace Enbridge.DepthOfCover
             this.groupDescription = groupDescription;
 
             this.groupCreatedDate = DateTime.Now;
+
+            this.username = username;
 
             
 
@@ -192,18 +198,19 @@ namespace Enbridge.DepthOfCover
             if (this.validationError == null)
             {
                 Enbridge.LinearReferencing.ContLineLocatorSQL locator = new Enbridge.LinearReferencing.ContLineLocatorSQL(lineLoopEventId);
-                for (int i = 0; i < this.docGraphicList.Count; i++)
+                for (int i = 0; i < this.docPointList.Count; i++)
                 {
                     double stn, meas, mp;
-                    string stnSeriesEventId = locator.getLocation(
-                        (double)this.docGraphicList[i].Attributes["POINT_X"], 
-                        (double)this.docGraphicList[i].Attributes["POINT_Y"], 
-                        out stn, 
-                        out meas, 
-                        out mp);
-                    this.docGraphicList[i].Attributes.Add("SeriesEventID", stnSeriesEventId);
-                    this.docGraphicList[i].Attributes.Add("Station", stn);
-                    this.docGraphicList[i].Attributes.Add("Measure", meas);
+                    string stnSeriesEventId = locator.getLocation(docPointList[i].point_X, docPointList[i].point_Y, out stn, out meas, out mp);
+
+                    docPointList[i].seriesEventId = stnSeriesEventId;
+                    docPointList[i].station = stn;
+                    docPointList[i].measure = meas;
+                    docPointList[i].pointGroupId = this.pointGroupId;
+                    docPointList[i].routeEventId = this.routeEventId;
+                    docPointList[i].groupCreatedDate = this.groupCreatedDate;
+
+                    this.docGraphicList.Add(docPointList[i].toGraphic());
                 }
             }
         }
@@ -220,39 +227,11 @@ namespace Enbridge.DepthOfCover
             this.extent["yMin"] = (yMerc < this.extent["yMin"] ? yMerc : this.extent["yMin"]);
             this.extent["yMax"] = (yMerc > this.extent["yMax"] ? yMerc : this.extent["yMax"]);
 
-            ESRI.ArcGIS.Client.Graphic graphic = new ESRI.ArcGIS.Client.Graphic();
-            graphic.Geometry = new ESRI.ArcGIS.Client.Geometry.MapPoint(X, Y, new ESRI.ArcGIS.Client.Geometry.SpatialReference(4326));
-            string guid = "{" + Guid.NewGuid().ToString().ToUpper() + "}";
-            graphic.Attributes.Add("EventID", guid);
-            graphic.Attributes.Add("OriginEventID", guid);
-            graphic.Attributes.Add("CreatedDate", createdDate);
-            graphic.Attributes.Add("CreatedBy", createdBy);
-            graphic.Attributes.Add("POINT_X", X);
-            graphic.Attributes.Add("POINT_Y", Y);
-            if (Z != null)
-            {
-                graphic.Attributes.Add("POINT_Z", (double)Z);
-            }
-            graphic.Attributes.Add("Measurement", measurement);
-            graphic.Attributes.Add("Description", description);
-            if (equipmentid != null)
-            {
-                graphic.Attributes.Add("EquipmentID", (int)equipmentid);
-            }
-            if (accuracy != null)
-            {
-                graphic.Attributes.Add("Accuracy", (double)accuracy);
-            }
-            if (probe != null)
-            {
-                graphic.Attributes.Add("Probe", ((bool)probe ? 1 : 0));
-            }
-            
-            graphic.Attributes.Add("PointGroupID", this.pointGroupId);
-            graphic.Attributes.Add("RouteEventID", this.routeEventId);
-            graphic.Attributes.Add("LastModified", this.groupCreatedDate);
-
-            this.docGraphicList.Add(graphic);
+            DocPoint docPoint = new DocPoint(createdBy, createdDate, X, Y, Z, measurement, description, equipmentid, accuracy, probe, this.groupCreatedDate, this.username);
+            docPoint.pointGroupId = this.pointGroupId;
+            docPoint.routeEventId = this.routeEventId;
+            docPoint.groupCreatedDate = this.groupCreatedDate;
+            this.docPointList.Add(docPoint);
         }
     }
 }

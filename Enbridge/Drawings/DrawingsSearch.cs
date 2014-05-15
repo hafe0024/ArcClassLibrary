@@ -115,7 +115,7 @@ namespace Enbridge.Drawings
                 }
 
                 //Check for the version number, this step will skip some file names that are mile post specific
-                Regex reg = new Regex(@"-[0-9]\.[0-9]*-[A-Z0-9]*-[0-9]*");
+                Regex reg = new Regex(@"-[0-9](\.|_)[0-9]*-[A-Z0-9]*-[0-9]*");
                 Match match = reg.Match(fullFileName);
 
                 string[] dwgNamePieces = match.Value.Split('-');
@@ -123,7 +123,7 @@ namespace Enbridge.Drawings
                 if (!int.TryParse(dwgNamePieces[dwgNamePieces.Length - 1], out dwgVersion))
                 {
                     Console.WriteLine(fullFilePath);
-                    Console.WriteLine("Skipped");
+                    Console.WriteLine("Skipped - Version Name Invalid");
                     continue;
                 }
 
@@ -139,7 +139,7 @@ namespace Enbridge.Drawings
 
                 //check if the version or modified date has been changed
                 //Preserve any georeferencing
-                Regex regCheckName = new Regex(@"[-A-Z0-9]*\.[0-9]*-[A-Z0-9]*");
+                Regex regCheckName = new Regex(@"[-A-Z0-9]*(\.|_)[0-9]*-[A-Z0-9]*");
                 Match matchName = regCheckName.Match(fullFileName);
 
                 int processFlag = -1;

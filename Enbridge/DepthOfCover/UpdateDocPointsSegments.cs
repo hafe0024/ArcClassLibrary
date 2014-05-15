@@ -10,59 +10,69 @@ namespace Enbridge.DepthOfCover
     /// <summary>
     /// 
     /// </summary>
-    public static class UpdateDocPointsSegments
+    [Serializable]
+    public class UpdateDocPointsSegments
     {
-        /// <summary>
-        /// updates segments based on all points
-        /// </summary>
-        public static void MakeSegments()
+        public List<DocPoint> docPointsList;
+        double searchDistance = 0.0000314006369436025;
+
+        public UpdateDocPointsSegments(string routeidentifier = null)
         {
+
+            docPointsList = new List<DocPoint>();
+
             List<string> routeEventIds = new List<string>();
 
-            using (SqlConnection conn = new SqlConnection(AppConstants.CONN_STRING_DOC))
+            if (routeidentifier == null)
             {
-                conn.Open();
-                SqlCommand comm = conn.CreateCommand();
-                comm.CommandText = "EXEC sde.set_current_version 'sde.WORKING';";
-                comm.CommandText += "Select Distinct RouteEventID from sde.DEPTHOFCOVER_EVW WHERE Status='Active';";
-
-                try
+                Console.WriteLine("route id is null");
+                using (SqlConnection conn = new SqlConnection(AppConstants.CONN_STRING_DOC))
                 {
-                    SqlDataReader reader = comm.ExecuteReader();
-                    while (reader.Read())
+                    conn.Open();
+                    SqlCommand comm = conn.CreateCommand();
+                    comm.CommandText = "EXEC sde.set_current_version 'sde.WORKING';";
+                    comm.CommandText += "Select Distinct RouteEventID from sde.DEPTHOFCOVER_EVW WHERE Status='Active';";
+
+                    try
                     {
-                        routeEventIds.Add(reader[0].ToString());
+                        SqlDataReader reader = comm.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            routeEventIds.Add(reader[0].ToString());
+                        }
+                    }
+                    catch (SqlException ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    finally
+                    {
+                        conn.Close();
                     }
                 }
-                catch (SqlException ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-                finally
-                {
-                    conn.Close();
-                }
+            }
+            else
+            {
+                Console.WriteLine("route id not null");
+                routeEventIds.Add(routeidentifier);
             }
 
             foreach (string id in routeEventIds)
             {
-                List<double> pointMeasureList = new List<double>();
-                List<double> pointMeasurementList = new List<double>();
-                List<string> pointEventIdList = new List<string>();
-                List<string> seriesEventIdList = new List<string>();
+                docPointsList.Clear();
 
                 string routeId = id.ToUpper();
                 Console.WriteLine(routeId);
-
-                UpdatePoints(routeId);
-                continue;
 
                 using (SqlConnection conn = new SqlConnection(AppConstants.CONN_STRING_DOC))
                 {
                     conn.Open();
                     SqlCommand comm = conn.CreateCommand();
                     comm.CommandText = "EXEC sde.set_current_version 'sde.WORKING';";
-                    comm.CommandText += "Select EventID, SeriesEventID, Measure, Measurement from sde.DEPTHOFCOVER_EVW ";
+                    comm.CommandText += "Select EventID, CreatedBy, CreatedDate, POINT_X, POINT_Y, POINT_Z, Measurement, ";
+                    comm.CommandText += "Description, EquipmentID, Accuracy, Probe, SeriesEventID, Station, Measure, ";
+                    comm.CommandText += "RouteEventID, PointGroupID, ModifiedBy ";
+                    comm.CommandText += "from sde.DEPTHOFCOVER_EVW ";
                     comm.CommandText += "WHERE Status='Active' AND RouteEventID = @routeId ";
                     comm.CommandText += "Order by Measure ASC;";
                     comm.Parameters.AddWithValue("routeId", routeId);
@@ -72,22 +82,7 @@ namespace Enbridge.DepthOfCover
                         SqlDataReader reader = comm.ExecuteReader();
                         while (reader.Read())
                         {
-                            double measure;
-                            double measurement;
-
-                            if (!Double.TryParse(reader["Measure"].ToString(), out measure))
-                            {
-                                continue;
-                            }
-                            if (!Double.TryParse(reader["Measurement"].ToString(), out measurement))
-                            {
-                                continue;
-                            }
-
-                            pointEventIdList.Add(reader["EventID"].ToString());
-                            seriesEventIdList.Add(reader["SeriesEventID"].ToString());
-                            pointMeasureList.Add(measure);
-                            pointMeasurementList.Add(measurement);
+                            docPointsList.Add(new DocPoint(reader));
                         }
                     }
                     catch (SqlException ex)
@@ -100,112 +95,119 @@ namespace Enbridge.DepthOfCover
                     }
                 }
 
-                List<double[]> segList = new List<double[]>();
+                UpdatePoints();
 
-                double firstStart = pointMeasureList[0] - 300;
-                double firstEnd = (pointMeasureList[0] + pointMeasureList[1]) / 2;
+                this.docPointsList.RemoveAll(isArchive);
+                this.docPointsList.RemoveAll(toRemove);
 
-                firstEnd = (firstEnd - pointMeasureList[0] > 300 ? pointMeasureList[0] + 300 : firstEnd);
-
-                //Console.WriteLine("{0} {1} {2} {3} {4}", pointMeasureList[0], firstStart, firstEnd, pointMeasureList[0] - firstStart, firstEnd - pointMeasureList[0]);
-
-                segList.Add(new double[3] { firstStart, firstEnd, pointMeasurementList[0] });
-
-                for (int i = 1; i < pointMeasurementList.Count - 1; i++)
+                switch (this.docPointsList.Count)
                 {
-                    double startMeasure = (pointMeasureList[i - 1] + pointMeasureList[i]) / 2;
-                    startMeasure = (pointMeasureList[i] - startMeasure > 300 ? pointMeasureList[i] - 300 : startMeasure);
+                    case 0:
+                        return;
+                    case 1:
+                        this.docPointsList[0].segmentStart = this.docPointsList[0].measure - 300;
+                        this.docPointsList[0].segmentStop = this.docPointsList[0].measure + 300;
+                        break;
+                    default:
+                        this.docPointsList[0].segmentStart = this.docPointsList[0].measure - 300;
+                        this.docPointsList[0].segmentStop = (this.docPointsList[0].measure + this.docPointsList[1].measure) / 2;
+                        this.docPointsList[0].segmentStop = (
+                            this.docPointsList[0].segmentStop - this.docPointsList[0].measure > 300 ?
+                            this.docPointsList[0].measure + 300 :
+                            this.docPointsList[0].segmentStop);
 
-                    double endMeasure = (pointMeasureList[i] + pointMeasureList[i + 1]) / 2;
-                    endMeasure = (endMeasure - pointMeasureList[i] > 300 ? pointMeasureList[i] + 300 : endMeasure);
+                        for (int i = 1; i < this.docPointsList.Count - 1; i++)
+                        {
+                            double startMeasure = (this.docPointsList[i - 1].measure + this.docPointsList[i].measure) / 2;
+                            startMeasure = (this.docPointsList[i].measure - startMeasure > 300 ? this.docPointsList[i].measure - 300 : startMeasure);
+                            this.docPointsList[i].segmentStart = startMeasure;
 
-                    //Console.WriteLine("{0} {1} {2} {3} {4}", pointMeasureList[i], startMeasure, endMeasure, pointMeasureList[i] - startMeasure, endMeasure - pointMeasureList[i]);
-                    //return;
-                    segList.Add(new double[3] {startMeasure, endMeasure, pointMeasurementList[i]});
+                            double endMeasure = (this.docPointsList[i].measure + this.docPointsList[i + 1].measure) / 2;
+                            endMeasure = (endMeasure - this.docPointsList[i].measure > 300 ? this.docPointsList[i].measure + 300 : endMeasure);
+                            this.docPointsList[i].segmentStop = endMeasure;
+                        }
+
+                        this.docPointsList[this.docPointsList.Count - 1].segmentStart = (this.docPointsList[this.docPointsList.Count - 1].measure + this.docPointsList[this.docPointsList.Count - 2].measure) / 2;
+                        this.docPointsList[this.docPointsList.Count - 1].segmentStart =
+                            (this.docPointsList[this.docPointsList.Count - 1].measure - this.docPointsList[this.docPointsList.Count - 1].segmentStart > 300 ?
+                             this.docPointsList[this.docPointsList.Count - 1].measure - 300 :
+                             this.docPointsList[this.docPointsList.Count - 1].segmentStart);
+                        this.docPointsList[this.docPointsList.Count - 1].segmentStop = this.docPointsList[this.docPointsList.Count - 1].measure + 300;
+
+                        break;
                 }
-
-                double lastStart = (pointMeasureList[pointMeasureList.Count - 1] + pointMeasureList[pointMeasureList.Count - 2]) / 2;
-                lastStart = (pointMeasureList[pointMeasureList.Count - 1] - lastStart > 300 ? pointMeasureList[pointMeasureList.Count - 1] - 300 : lastStart);
-                double lastEnd = pointMeasureList[pointMeasureList.Count - 1] + 300;
-
-                segList.Add(new double[3] { lastStart, lastEnd, pointMeasurementList[pointMeasurementList.Count - 1] });
 
                 Enbridge.LinearReferencing.ContLineLocatorSQL locator = new Enbridge.LinearReferencing.ContLineLocatorSQL(routeId);
 
                 double minMeasure = locator.pointList[0].meas;
                 double maxMeasure = locator.pointList[locator.pointList.Count - 1].meas;
 
-                List<string> valuesList = new List<string>();
+                List<DocSegment> segmentList = new List<DocSegment>();
 
-                for (int i = 0; i < segList.Count; i++)
+                for (int i = 0; i < this.docPointsList.Count; i++)
                 {
-                    List<string> individualParams = new List<string>();
+
                     //Console.WriteLine("{0} {1} {2}", segList[i][0], segList[i][1], segList[i][2]);
-                    segList[i][0] = (segList[i][0] < minMeasure ? minMeasure : segList[i][0]);
-                    segList[i][1] = (segList[i][1] > maxMeasure ? maxMeasure : segList[i][1]);
+                    this.docPointsList[i].segmentStart = (this.docPointsList[i].segmentStart < minMeasure ? minMeasure : this.docPointsList[i].segmentStart);
+                    this.docPointsList[i].segmentStop = (this.docPointsList[i].segmentStop > maxMeasure ? maxMeasure : this.docPointsList[i].segmentStop);
                     double startStn, endStn;
-                    string geomString = locator.makeSegmentLineString(segList[i][0], segList[i][1], out startStn, out endStn);
-                    //geometry
-                    individualParams.Add(string.Format("geometry::STGeomFromText('{0}', 4326)", geomString));
-                    //start stationing       
-                    individualParams.Add(startStn.ToString());
-                    //start stationing       
-                    individualParams.Add(endStn.ToString());
-                    string guid = "'" + Guid.NewGuid().ToString().ToUpper() + "'";
-                    //eventid       
-                    individualParams.Add(guid);
-                    //origineventid       
-                    individualParams.Add(guid);
-
-                    string dte = "'" + DateTime.Now.ToString("yyyyddmm") + "'";
-                    //created date
-                    individualParams.Add(dte);
-                    //modified date
-                    individualParams.Add(dte);
-
-                    //createdby
-                    individualParams.Add("'SUPGIS01'");
-                    //modifiedby
-                    individualParams.Add("'SUPGIS01'");
-
-                    //series eventid
-                    individualParams.Add(string.Format("'{0}'", seriesEventIdList[i]));
-
-                    //Measurement
-                    individualParams.Add(string.Format("{0}", pointMeasurementList[i]));
-
-                    //PointId
-                    individualParams.Add(string.Format("'{0}'", pointEventIdList[i]));
-
-                    //route eventid
-                    individualParams.Add(string.Format("'{0}'", routeId));
-
-                    valuesList.Add("(" + string.Join(",", individualParams) + ")");
+                    //Console.WriteLine("__{0}, {1}", this.docPointsList[i].segmentStart, this.docPointsList[i].segmentStop);
+                    string geomString = locator.makeSegmentLineString(this.docPointsList[i].segmentStart, this.docPointsList[i].segmentStop, out startStn, out endStn);
+                    DocSegment seg = new DocSegment(geomString, startStn, endStn, 
+                        this.docPointsList[i].seriesEventId, this.docPointsList[i].measurement, 
+                        this.docPointsList[i].eventID, routeId);
+                    segmentList.Add(seg);
                 }
 
                 using (SqlConnection conn = new SqlConnection(AppConstants.CONN_STRING_DOC))
                 {
                     conn.Open();
                     SqlCommand comm = conn.CreateCommand();
-                    comm.CommandText = "EXEC sde.set_current_version 'sde.WORKING';";
-                    comm.CommandText += "EXEC sde.edit_version 'sde.WORKING', 1;";
-                    comm.CommandText += "BEGIN TRANSACTION;";
-                    comm.CommandText += "DELETE FROM sde.DEPTHOFCOVERSEGMENTS_EVW WHERE RouteEventID = @routeId OR RouteEventID IS NULL;";
+                    string commandInit = "EXEC sde.set_current_version 'sde.WORKING';";
+                    commandInit += "EXEC sde.edit_version 'sde.working', 1;";
+                    commandInit += "begin transaction;";
+                    comm.CommandText = commandInit;
+                    comm.CommandText += "DELETE from sde.depthofcoversegments_evw where routeeventid = @routeid or routeeventid is null;";
+                    string commandEnd = "COMMIT;";
+                    commandEnd += "EXEC sde.edit_version 'sde.WORKING', 2;";
+                    comm.CommandText += commandEnd;
+                    comm.Parameters.AddWithValue("@routeid", routeId);
 
-                    comm.CommandText += "INSERT INTO sde.DEPTHOFCOVERSEGMENTS_EVW ";
-                    comm.CommandText += "(";
-                    comm.CommandText += "SHAPE, StartStationing, EndStationing, EventID, OriginEventID, CreatedDate, LastModified, ";
-                    comm.CommandText += "CreatedBy, ModifiedBy, SeriesEventID, Measurement, PointEventID, RouteEventID";
-                    comm.CommandText += ") ";
-                    comm.CommandText += "VALUES ";
-                    comm.CommandText += string.Join(",", valuesList) + ";";
-                    comm.CommandText += "COMMIT;";
-
-                    comm.CommandText += "EXEC sde.edit_version 'sde.WORKING', 2;";
-                    comm.Parameters.AddWithValue("@routeId", routeId);
                     try
                     {
                         comm.ExecuteNonQuery();
+                        comm.Parameters.Clear();
+
+                        comm.CommandText = commandInit;
+
+                        int counter = 0;
+
+                        for (int i = 0; i < segmentList.Count; i++)
+                        {
+                            string commandString = "INSERT INTO sde.depthofcoversegments_evw ";
+                            commandString += "(";
+                            commandString += "shape, startstationing, endstationing, eventid, origineventid, ";
+                            commandString += "CreatedBy, ModifiedBy, ";
+                            //commandString += ", createddate, lastmodified, ";
+                            commandString += "serieseventid, measurement, pointeventid, routeeventid";
+                            commandString += ") ";
+                            commandString += "VALUES ";
+                            commandString += segmentList[i].ToString();
+                            commandString += ";";
+                            comm.CommandText += commandString;
+
+                            counter++;
+                            if (counter > 50 || i == segmentList.Count - 1)
+                            {
+                                comm.CommandText += commandEnd;
+                                comm.ExecuteNonQuery();
+                                Console.WriteLine("segments in");
+                                comm.CommandText = commandInit;
+                                counter = 0;
+                            }
+                        }
+
+                        Console.WriteLine("success");
                     }
                     catch (SqlException ex)
                     {
@@ -221,41 +223,115 @@ namespace Enbridge.DepthOfCover
             }
         }
 
-        private static void UpdatePoints(string routeId)
+        private void UpdatePoints()
         {
+
+            List<DocPoint> pointCheckList = new List<DocPoint>(this.docPointsList);
+            Dictionary<string, List<string>> neighborsDict = new  Dictionary<string, List<string>>();
+            Dictionary<string, DocPoint> pointDictionary = new Dictionary<string,DocPoint>();
+
+            while (true)
+            {
+                string thisPointId = pointCheckList[0].eventID;
+                pointDictionary[thisPointId] = pointCheckList[0];
+                neighborsDict[thisPointId] = new List<string>();
+                
+                for (int i = 1; i < pointCheckList.Count; i++)
+                {
+                    if (pointCheckList[0].getDistance(pointCheckList[i]) < searchDistance)
+                    {
+                        string searchPointId = pointCheckList[i].eventID;
+                        neighborsDict[thisPointId].Add(searchPointId);
+
+                        if (!neighborsDict.ContainsKey(searchPointId))
+                        {
+                            neighborsDict[searchPointId] = new List<string>();
+                        }
+                        neighborsDict[searchPointId].Add(thisPointId);
+                    }
+                }
+                pointCheckList.Remove(pointCheckList[0]);
+                if (pointCheckList.Count == 0)
+                {
+                    break;
+                }
+            }
+
+            foreach (KeyValuePair<string, List<string>> item in neighborsDict)
+            {
+                string key = item.Key;
+                List<string> neighborsList = item.Value;
+
+                foreach (string checkKey in neighborsList)
+                {
+                    if (pointDictionary[key].createdDate < pointDictionary[checkKey].createdDate || 
+                        (pointDictionary[key].probe == false && pointDictionary[checkKey].probe == true))
+                    {
+                        pointDictionary[key].flagArchive = true;
+                        break;
+                    }
+
+                    if (pointDictionary[key].Equals(pointDictionary[checkKey]))
+                    {
+                        pointDictionary[key].toRemove = true;
+                    }
+                }
+            }
+
+            var archiveResult = from c in this.docPointsList where c.flagArchive select "'" + c.eventID + "'";
+            var currentResult = from c in this.docPointsList where !c.flagArchive select "'" + c.eventID + "'";
+            var removeResult = from c in this.docPointsList where c.toRemove select "'" + c.eventID + "'";
+            List<string> archiveList = archiveResult.ToList();
+            List<string> currentList = currentResult.ToList();
+            List<string> removeList = removeResult.ToList();
+
+            Console.WriteLine("Archive Points Count: {0}", archiveList.Count);
+            Console.WriteLine("Current Points Count: {0}", currentList.Count);
+            Console.WriteLine("Remove Points Count: {0}", removeList.Count);
+
+            string initCommand = "EXEC sde.set_current_version 'sde.WORKING';";
+            initCommand += "EXEC sde.edit_version 'sde.working', 1;";
+            initCommand += "BEGIN TRANSACTION;";
+
+            string endCommand = "COMMIT;";
+            endCommand += "EXEC sde.edit_version 'sde.WORKING', 2;";
+
             using (SqlConnection conn = new SqlConnection(AppConstants.CONN_STRING_DOC))
             {
                 conn.Open();
                 SqlCommand comm = conn.CreateCommand();
-                comm.CommandText = "EXEC sde.set_current_version 'sde.WORKING';";
-                comm.CommandText += "Select EventID, SeriesEventID, Measure, Measurement from sde.DEPTHOFCOVER_EVW ";
-                comm.CommandText += "WHERE Status='Active' AND RouteEventID = @routeId ";
-                comm.CommandText += "Order by Measure ASC;";
-                comm.Parameters.AddWithValue("routeId", routeId);
 
                 try
                 {
-                    SqlDataReader reader = comm.ExecuteReader();
-                    while (reader.Read())
+                    List<string> archiveGroups = idGroupsFromList(archiveList);
+                    foreach (string group in archiveGroups)
                     {
-                        double measure;
-                        double measurement;
-                        Console.WriteLine(reader["Measure"]);
-                        //if (!Double.TryParse(reader["Measure"].ToString(), out measure))
-                        //{
-                        //    continue;
-                        //}
-                        //if (!Double.TryParse(reader["Measurement"].ToString(), out measurement))
-                        //{
-                        //    continue;
-                        //}
-
-                        //pointEventIdList.Add(reader["EventID"].ToString());
-                        //seriesEventIdList.Add(reader["SeriesEventID"].ToString());
-                        //pointMeasureList.Add(measure);
-                        //pointMeasurementList.Add(measurement);
+                        comm.CommandText = initCommand;
+                        comm.CommandText += "UPDATE sde.DEPTHOFCOVER_EVW SET HistoricalState='Historical' WHERE EventID in (" + group + ");";
+                        comm.CommandText += endCommand;
+                        comm.ExecuteNonQuery();
+                        Console.WriteLine("groupUdated");
                     }
-                    Console.WriteLine("here");
+
+                    List<string> currentGroups = idGroupsFromList(currentList);
+                    foreach (string group in currentGroups)
+                    {
+                        comm.CommandText = initCommand;
+                        comm.CommandText += "UPDATE sde.DEPTHOFCOVER_EVW SET HistoricalState='Current' WHERE EventID in (" + group + ");";
+                        comm.CommandText += endCommand;
+                        comm.ExecuteNonQuery();
+                        Console.WriteLine("groupUdated");
+                    }
+
+                    List<string> deleteGroups = idGroupsFromList(removeList);
+                    foreach (string group in deleteGroups)
+                    {
+                        comm.CommandText = initCommand;
+                        comm.CommandText += "UPDATE sde.DEPTHOFCOVER_EVW SET HistoricalState='Duplicate', Status='Inactive' WHERE EventID in (" + group + ");";
+                        comm.CommandText += endCommand;
+                        comm.ExecuteNonQuery();
+                        Console.WriteLine("groupUdated");
+                    }
                 }
                 catch (SqlException ex)
                 {
@@ -263,15 +339,46 @@ namespace Enbridge.DepthOfCover
                 }
                 finally
                 {
+                    comm.Dispose();
                     conn.Close();
+                    Console.WriteLine("exited");
                 }
             }
+        }
 
+        private bool isArchive(DocPoint point)
+        {
+            return point.flagArchive;
+        }
 
+        private bool toRemove(DocPoint point)
+        {
+            return point.toRemove;
+        }
+
+        private static List<string> idGroupsFromList(List<string> inputList)
+        {
+            int counter = 0;
+            List<string> outputList = new List<string>();
+            List<string> tempList = new List<string>();
+
+            for (int i = 0; i < inputList.Count; i++)
+            {
+                tempList.Add(inputList[i]);
+                counter++;
+                if (counter > 200 || i == inputList.Count - 1)
+                {
+                    counter = 0;
+                    if (tempList.Count > 0)
+                    {
+                        outputList.Add(string.Join(",",tempList));
+                    }
+
+                    tempList.Clear();
+                }
+            }
+            return outputList;
         }
     }
-
-
-
 }
 

@@ -237,7 +237,7 @@ namespace Enbridge.LinearReferencing
         /// <param name="stn">stationing</param>
         /// <param name="meas">continuous stationing</param>
         /// <param name="MP">mile post</param>
-        /// <returns>StationSeries event id</returns>
+        /// <returns>StationSeries event id, in caps with brackets</returns>
         public string getLocation(double X, double Y, out double stn, out double meas, out double MP)
         {
             double minDist = 10E40;
