@@ -76,5 +76,51 @@ namespace Enbridge.PLM
             }
         }
 
+        public static Object nullOneOrZeroFromNullableBool(bool? trueFalseNull)
+        {
+            switch (trueFalseNull)
+            {
+                case null:
+                    return DBNull.Value;
+                case true:
+                    return 1;
+                case false:
+                    return 0;
+                default:
+                    throw new Exception("invalid value entered");
+            }
+        }
+
+
+        public static Object nullOrNumberFromNullableDouble(double? input)
+        {
+            if (input == null)
+            {
+                return DBNull.Value;
+            }
+            else
+            {
+                return (double)input;
+            }
+
+        }
+
+
+        public static Object nullOrStringFromString(string input, int characterLimit = 50)
+        {
+            if (input == null || input.Trim() == "")
+            {
+                return DBNull.Value;
+            }
+            else
+            {
+                if (input.Length > characterLimit)
+                {
+                    input = input.Substring(0, characterLimit);
+                }
+                return input;
+            }
+
+        }
     }
 }

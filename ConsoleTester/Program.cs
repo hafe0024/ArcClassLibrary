@@ -27,6 +27,15 @@ namespace ConsoleTester
 
         static void Main(string[] args)
         {
+            Enbridge.PLM.PlmReport report = new Enbridge.PLM.PlmReport();
+
+            report.setReportProperties("glenn", Guid.NewGuid(), "yes", null, null, "no", Guid.NewGuid(), "new report");
+            report.permanentRepair = new Enbridge.PLM.PermanentRepair();
+            report.permanentRepair.setTab1Values(DateTime.Now, DateTime.Now, "yes", "broke", "20", "4", "sweet", "2", "thick", "a house", "no");
+            report.permanentRepair.setTab2Values("yes", "2342", "remark", "no", DateTime.Now, "45", "-92", "no", "here", "fittings");
+            bool success = report.saveReport();
+
+            
 
 
 

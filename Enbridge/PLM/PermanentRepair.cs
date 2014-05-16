@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,6 +36,12 @@ namespace Enbridge.PLM
         public PermanentRepair()
         {
             this.contactTime = DateTime.Now;
+            this.contactTime = this.dateOfRepair = DateTime.Now;
+            this.repairDueToLeak = this.reportFeePaid = this.stockPipeInstalled = this.govAgencyContacted = this.gpsReading = null;
+            this.oilOut = this.oilRecovered = this.lat = this.lon = null;
+            this.causeOfBreakLeak = this.crudeType = this.batchNumber = this.dispositionOfOil = this.nameAndAddressOfReporter = null;
+            this.hydrotestNumber = this.remarks = this.locationDescription = this.fittingsAddedToMainline = null;
+
         }
 
         public void setTab1Values(DateTime dateOfDiscovery, DateTime dateOfRepair, Object repairDueToLeak, string causeOfBreakLeak, string oilOut, 
@@ -67,6 +74,77 @@ namespace Enbridge.PLM
             this.gpsReading = PLM_Helpers.trueFalseValue(gpsReading);
             this.locationDescription = locationDescription;
             this.fittingsAddedToMainline = fittingsAddedToMainline;
+        }
+
+        public void saveToDatabase(string reportID)
+        {
+
+            using (SqlConnection conn = new SqlConnection(AppConstants.CONN_STRING_PLM_REPORTS))
+            {
+                conn.Open();
+                SqlCommand comm = conn.CreateCommand();
+                comm.CommandText = "";
+                comm.CommandText += "EXEC sde.set_current_version 'SDE.Working';";
+                comm.CommandText += "EXEC sde.edit_version 'SDE.Working', 1;";
+                comm.CommandText += "BEGIN TRANSACTION;";
+                comm.CommandText += "INSERT into sde.PERMANENT_REPAIR_EVW (";
+
+                comm.CommandText += "ID, ReportID, DateOfDiscovery, DateOfRepair, RepairDueToLeak, CauseOfBreak, OilOut, ";
+                comm.CommandText += "OilRecovered, CrudeType, BatchNumber, DispositionOfOil, NameAndAddressOfReporter, ";
+                comm.CommandText += "ReportFeePaid, StockPipeInstalled, Remarks, GovAgencyContacted, GovContactTime, ";
+                comm.CommandText += "Latitude, Longitude, GPSReading, LocationDescription";
+                comm.CommandText += ") Values (";
+                comm.CommandText += "NEWID(), @ReportID, @DateOfDiscovery, @DateOfRepair, @RepairDueToLeak, @CauseOfBreak, @OilOut, ";
+                comm.CommandText += "@OilRecovered, @CrudeType, @BatchNumber, @DispositionOfOil, @NameAndAddressOfReporter, ";
+                comm.CommandText += "@ReportFeePaid, @StockPipeInstalled, @Remarks, @GovAgencyContacted, @GovContactTime, ";
+                comm.CommandText += "@Latitude, @Longitude, @GPSReading, @LocationDescription";
+                comm.CommandText += ");";
+                comm.CommandText += "COMMIT;";
+                comm.CommandText += "EXEC sde.edit_version 'SDE.Working', 2;";
+
+                comm.Parameters.AddWithValue("@reportID", reportID);
+                comm.Parameters.AddWithValue("@DateOfDiscovery", this.dateOfDiscovery);
+                comm.Parameters.AddWithValue("@DateOfRepair", this.dateOfRepair);
+                comm.Parameters.AddWithValue("@RepairDueToLeak", PLM_Helpers.nullOneOrZeroFromNullableBool(this.repairDueToLeak));
+                comm.Parameters.AddWithValue("@CauseOfBreak", PLM_Helpers.nullOrStringFromString(this.causeOfBreakLeak));
+                comm.Parameters.AddWithValue("@OilOut", PLM_Helpers.nullOrNumberFromNullableDouble(this.oilOut));
+                comm.Parameters.AddWithValue("@OilRecovered", PLM_Helpers.nullOrNumberFromNullableDouble(this.oilRecovered));
+                comm.Parameters.AddWithValue("@CrudeType", PLM_Helpers.nullOrStringFromString(this.crudeType));
+                comm.Parameters.AddWithValue("@BatchNumber", PLM_Helpers.nullOrStringFromString(this.batchNumber));
+                comm.Parameters.AddWithValue("@DispositionOfOil", PLM_Helpers.nullOrStringFromString(this.dispositionOfOil));
+                comm.Parameters.AddWithValue("@NameAndAddressOfReporter", PLM_Helpers.nullOrStringFromString(this.dispositionOfOil));
+                comm.Parameters.AddWithValue("@ReportFeePaid", PLM_Helpers.nullOneOrZeroFromNullableBool(this.reportFeePaid));
+                comm.Parameters.AddWithValue("@StockPipeInstalled", PLM_Helpers.nullOneOrZeroFromNullableBool(this.stockPipeInstalled));
+                comm.Parameters.AddWithValue("@Remarks", PLM_Helpers.nullOrStringFromString(this.remarks));
+                comm.Parameters.AddWithValue("@GovAgencyContacted", PLM_Helpers.nullOneOrZeroFromNullableBool(this.govAgencyContacted));
+                comm.Parameters.AddWithValue("@GovContactTime", this.contactTime);
+                comm.Parameters.AddWithValue("@Latitude", PLM_Helpers.nullOrNumberFromNullableDouble(this.lat));
+                comm.Parameters.AddWithValue("@Longitude", PLM_Helpers.nullOrNumberFromNullableDouble(this.lon));
+                comm.Parameters.AddWithValue("@GPSReading", PLM_Helpers.nullOneOrZeroFromNullableBool(this.gpsReading));
+                comm.Parameters.AddWithValue("@LocationDescription", PLM_Helpers.nullOrStringFromString(this.locationDescription));
+
+                try
+                {
+                    comm.ExecuteNonQuery();
+
+                }
+                catch (SqlException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                finally
+                {
+                    comm.Dispose();
+                    conn.Close();
+                }
+            }
+
+
+
+
+
+
+
         }
     }
 }

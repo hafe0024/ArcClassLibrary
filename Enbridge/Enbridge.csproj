@@ -126,9 +126,11 @@
     <Compile Include="LinearReferencing\Valve.cs" />
     <Compile Include="LinearReferencing\VolumeOutResult.cs" />
     <Compile Include="PLM\CorrosionInpsection.cs" />
+    <Compile Include="PLM\FileAttachments.cs" />
     <Compile Include="PLM\ForeignCrossing.cs" />
     <Compile Include="PLM\PermanentRepair.cs" />
     <Compile Include="PLM\PlmReport.cs" />
+    <Compile Include="PLM\PLM_Constants.cs" />
     <Compile Include="PLM\PLM_Helpers.cs" />
     <Compile Include="PLM\ReportProperties.cs" />
     <Compile Include="PLM\RowInfo.cs" />

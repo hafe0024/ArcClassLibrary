@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,6 +33,10 @@ namespace Enbridge.PLM
 
         public CorrosionInpsection corrosionInspection;
 
+        public FileAttachments fileAttachments;
+
+        private bool? isForeignCrossing;
+
         #endregion class properties
 
         #region constructors
@@ -41,12 +46,14 @@ namespace Enbridge.PLM
         /// </summary>
         public PlmReport()
         {
+            isForeignCrossing = null;
             this.reportId = Guid.NewGuid().ToString();
             this.foreignCrossing = null;
             this.reportProperties = null;
             this.rowInfo = null;
             this.corrosionInspection = null;
             this.permanentRepair = null;
+            this.fileAttachments = new FileAttachments();
 
         }
 
@@ -61,7 +68,16 @@ namespace Enbridge.PLM
 
         #endregion constructors
 
+
+        public void setIsForeignCrossing(bool isForeign)
+        {
+            this.isForeignCrossing = isForeign;
+        }
+
+
+
         #region report properties
+
 
         /// <summary>
         /// Set the report properties
@@ -70,6 +86,10 @@ namespace Enbridge.PLM
         /// <param name="reportType"></param>
         /// <param name="sleeveUsed"></param>
         /// <param name="weldingDone"></param>
+        /// <param name="stoppleEquipmentUsed"></param>
+        /// <param name="afrNeeded"></param>
+        /// <param name="plmFacilty"></param>
+        /// <param name="reportName"></param>
         public void setReportProperties(string username, Object reportType, Object sleeveUsed, Object weldingDone, Object stoppleEquipmentUsed, Object afrNeeded,
             Object plmFacilty, string reportName)
         {
@@ -288,9 +308,51 @@ namespace Enbridge.PLM
         /// <summary>
         /// Submit the form to the database
         /// </summary>
-        public void saveReport()
+        public bool saveReport()
         {
-            Console.WriteLine("submitting {0}", "thing");
+            using (SqlConnection conn = new SqlConnection(AppConstants.CONN_STRING_PLM_REPORTS))
+            {
+                conn.Open();
+                SqlCommand comm = conn.CreateCommand();
+                comm.CommandText = "";
+                comm.CommandText += "EXEC sde.set_current_version 'SDE.Working';";
+                comm.CommandText += "EXEC sde.edit_version 'SDE.Working', 1;";
+                comm.CommandText += "BEGIN TRANSACTION;";
+                comm.CommandText += "INSERT into sde.PLM_REPORT_EVW ";
+                comm.CommandText += "(ID, ReportName, UserName, LoadedDate, ReportTypeID, PLM_Facility_ID, SleeveUsed, WeldingDone, StoppleEquipment, AFRNeeded) ";
+                comm.CommandText += "Values (@reportID, @reportName, @userName, GETDATE(), @reportTypeID, @plm_ID, @sleeveUsed, @weldingDone, @stoppleEquip, @afr);";
+                comm.CommandText += "COMMIT;";
+                comm.CommandText += "EXEC sde.edit_version 'SDE.Working', 2;";
+
+                comm.Parameters.AddWithValue("@reportID", this.reportId);
+                comm.Parameters.AddWithValue("@reportName", PLM_Helpers.nullOrStringFromString(this.reportProperties.username));
+                comm.Parameters.AddWithValue("@userName", PLM_Helpers.nullOrStringFromString(this.reportProperties.reportName));
+                comm.Parameters.AddWithValue("@reportTypeID", this.reportProperties.reportType);
+                comm.Parameters.AddWithValue("@plm_ID", this.reportProperties.plmFacility);
+                comm.Parameters.AddWithValue("@sleeveUsed", PLM_Helpers.nullOneOrZeroFromNullableBool(this.reportProperties.sleeveUsed));
+                comm.Parameters.AddWithValue("@weldingDone", PLM_Helpers.nullOneOrZeroFromNullableBool(this.reportProperties.weldingDone));
+                comm.Parameters.AddWithValue("@stoppleEquip", PLM_Helpers.nullOneOrZeroFromNullableBool(this.reportProperties.stoppleEquipmentUsed));
+                comm.Parameters.AddWithValue("@afr", PLM_Helpers.nullOneOrZeroFromNullableBool(this.reportProperties.afrNeeded));
+
+                try
+                {
+                    comm.ExecuteNonQuery();
+
+                }
+                catch (SqlException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                finally
+                {
+                    comm.Dispose();
+                    conn.Close();
+                }
+            }
+
+            this.permanentRepair.saveToDatabase(this.reportId);
+            this.corrosionInspection.saveToDatabase(this.reportId);
+            return true;
         }
     }
 }

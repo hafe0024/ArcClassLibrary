@@ -57,6 +57,10 @@ namespace Enbridge
         /// <summary>
         /// 
         /// </summary>
+        public const string CONN_STRING_PLM_REPORTS = @"server=SUPGIS01\GISSERVER1;uid=data_write;pwd=D.A.T.A.R.W!@#123;database=PLM_Reports";
+        /// <summary>
+        /// 
+        /// </summary>
         public const string CONN_STRING_DOC = @"server=SUPGIS01\GISSERVER1;uid=data_write;pwd=D.A.T.A.R.W!@#123;database=DOC";
         /// <summary>
         /// 

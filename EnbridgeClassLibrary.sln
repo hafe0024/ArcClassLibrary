@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleTester", "ConsoleTes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enbridge", "Enbridge\Enbridge.csproj", "{3735EAD1-0D3D-43D1-9B7D-177AE94946DD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{B700B28D-88C4-4336-8619-033BD1F81D8F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,12 @@ Global
 		{3735EAD1-0D3D-43D1-9B7D-177AE94946DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3735EAD1-0D3D-43D1-9B7D-177AE94946DD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3735EAD1-0D3D-43D1-9B7D-177AE94946DD}.Release|x86.ActiveCfg = Release|Any CPU
+		{B700B28D-88C4-4336-8619-033BD1F81D8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B700B28D-88C4-4336-8619-033BD1F81D8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B700B28D-88C4-4336-8619-033BD1F81D8F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B700B28D-88C4-4336-8619-033BD1F81D8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B700B28D-88C4-4336-8619-033BD1F81D8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B700B28D-88C4-4336-8619-033BD1F81D8F}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
