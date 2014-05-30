@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Enbridge.Authentication
 {
+    /// <summary>
+    /// User authentication
+    /// </summary>
     public static class UserAuthentication
     {
         public static string userCheck(string userName)

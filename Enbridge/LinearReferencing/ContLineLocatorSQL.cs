@@ -14,10 +14,8 @@ namespace Enbridge.LinearReferencing
     [Serializable]
     public class ContLineLocatorSQL
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        public Dictionary<string, StationSeriesSQL> stnSeriesDict = new Dictionary<string, StationSeriesSQL>();
+
+        private Dictionary<string, StationSeriesSQL> stnSeriesDict = new Dictionary<string, StationSeriesSQL>();
         /// <summary>
         /// 
         /// </summary>
@@ -46,7 +44,6 @@ namespace Enbridge.LinearReferencing
         /// 
         /// </summary>
         public List<Valve> valveList = new List<Valve>();
-
 
         /// <summary>
         /// Generate a locator object
@@ -225,20 +222,35 @@ namespace Enbridge.LinearReferencing
             this.updateValveMeasure();
             this.valveList.Sort();
 
-
-
         }
 
         /// <summary>
-        /// gets location values given a point with latitude longitude
+        /// Get location given latitude and longitude
         /// </summary>
-        /// <param name="X">point longitude</param>
-        /// <param name="Y">point latitude</param>
-        /// <param name="stn">stationing</param>
-        /// <param name="meas">continuous stationing</param>
-        /// <param name="MP">mile post</param>
-        /// <returns>StationSeries event id, in caps with brackets</returns>
+        /// <param name="X">Longitude</param>
+        /// <param name="Y">Latitude</param>
+        /// <returns>Station Series ID</returns>
+        public string getLocation(double X, double Y)
+        {
+            double stn, meas, MP;
+            return this.privateGetLocation(X, Y, out stn, out meas, out MP);
+        }
+
+        /// <summary>
+        /// Get location given latitude and longitude
+        /// </summary>
+        /// <param name="X">Longitude</param>
+        /// <param name="Y">Latitude</param>
+        /// <param name="stn">Stationing</param>
+        /// <param name="meas">Continuous Measure</param>
+        /// <param name="MP">Mile Post</param>
+        /// <returns>Station Series ID</returns>
         public string getLocation(double X, double Y, out double stn, out double meas, out double MP)
+        {
+            return this.privateGetLocation(X, Y, out stn, out meas, out MP);
+        }
+        
+        private string privateGetLocation(double X, double Y, out double stn, out double meas, out double MP)
         {
             double minDist = 10E40;
             int minIndex = 0;
@@ -313,17 +325,6 @@ namespace Enbridge.LinearReferencing
             return stnSeries;
         }
 
-        /// <summary>
-        /// Helper method to interpolate values between two indices in the point list
-        /// </summary>
-        /// <param name="index1"></param>
-        /// <param name="index2"></param>
-        /// <param name="X">Lon</param>
-        /// <param name="Y">Lat</param>
-        /// <param name="stn"></param>
-        /// <param name="meas"></param>
-        /// <param name="mp"></param>
-        /// <returns>Station Series event id</returns>
         private string interpolateOut(int index1, int index2, double X, double Y, out double stn, out double meas, out double mp)
         {
             //swap if necessary
@@ -399,15 +400,31 @@ namespace Enbridge.LinearReferencing
         }
 
         /// <summary>
-        /// Get the stationing and location from the MP
+        /// Get Stationing from mile post
         /// </summary>
-        /// <param name="MP"></param>
-        /// <param name="meas"></param>
-        /// <param name="X"></param>
-        /// <param name="Y"></param>
-        /// <param name="Z"></param>
-        /// <returns></returns>
+        /// <param name="MP">Mile Post</param>
+        /// <returns>Stationing</returns>
+        public double getStnFromMP(double MP)
+        {
+            double meas, X, Y, Z;
+            return this.privateGetStnFromMP(MP, out meas, out X, out Y, out Z);
+        }
+
+        /// <summary>
+        /// Get Stationing from mile post
+        /// </summary>
+        /// <param name="MP">Mile Post</param>
+        /// <param name="meas">Continuous Measure</param>
+        /// <param name="X">Longitude</param>
+        /// <param name="Y">Latitude</param>
+        /// <param name="Z">Elevation Meters</param>
+        /// <returns>Stationing</returns>
         public double getStnFromMP(double MP, out double meas, out double X, out double Y, out double Z)
+        {
+            return this.privateGetStnFromMP(MP, out meas, out X, out Y, out Z);
+        }
+
+        private double privateGetStnFromMP(double MP, out double meas, out double X, out double Y, out double Z)
         {
             int index1 = -1;
             int index2 = -1;
@@ -473,17 +490,33 @@ namespace Enbridge.LinearReferencing
             //return the interpolated stationing
             return (1 - Math.Abs(pointList[index1].MP - MP) / interval) * stn1 +  (1 - Math.Abs(pointList[index2].MP - MP) / interval) * stn2;
         }
-        
+
         /// <summary>
-        /// Get an estimated mile post from startioning
+        /// Get the mile post from stationing
         /// </summary>
-        /// <param name="stn"></param>
-        /// <param name="meas"></param>
-        /// <param name="X"></param>
-        /// <param name="Y"></param>
-        /// <param name="Z"></param>
-        /// <returns>mile post</returns>
+        /// <param name="stn">Stationing</param>
+        /// <returns>MilePost</returns>
+        public double getMPFromStn(double stn)
+        {
+            double meas, X, Y, Z;
+            return this.privateGetMPFromStn(stn, out meas, out X, out Y, out Z);
+        }
+
+        /// <summary>
+        /// Get the mile post from stationing
+        /// </summary>
+        /// <param name="stn">Stationing</param>
+        /// <param name="meas">Continuous Measure</param>
+        /// <param name="X">Longitude</param>
+        /// <param name="Y">Latitude</param>
+        /// <param name="Z">Elevation</param>
+        /// <returns>MilePost</returns>
         public double getMPFromStn(double stn, out double meas, out double X, out double Y, out double Z)
+        {
+            return this.privateGetMPFromStn(stn, out meas, out X, out Y, out Z);
+        }
+
+        private double privateGetMPFromStn(double stn, out double meas, out double X, out double Y, out double Z)
         {
             double minDiff = 10E100;
             int minIndex = -1;
@@ -537,17 +570,32 @@ namespace Enbridge.LinearReferencing
             return pointList[minIndex].MP + multFactor * (pointList[secondIndex].MP - pointList[minIndex].MP);
         }
 
-
         /// <summary>
-        /// Return the stationing given a measure value
+        /// Get stationing and MP given a the continuous measure
         /// </summary>
         /// <param name="measure"></param>
-        /// <param name="MP"></param>
-        /// <param name="X"></param>
-        /// <param name="Y"></param>
-        /// <param name="Z"></param>
-        /// <returns>stationing</returns>
+        /// <returns>Stationing</returns>
+        public double getStnMPFromMeasure(double measure)
+        {
+            double MP, X, Y, Z;
+            return this.privateGetStnMPFromMeasure(measure, out MP, out X, out Y, out Z);
+        }
+
+        /// <summary>
+        /// Get stationing and MP given a the continuous measure
+        /// </summary>
+        /// <param name="measure">Continuous Measure</param>
+        /// <param name="MP">Mile Post</param>
+        /// <param name="X">Longitude</param>
+        /// <param name="Y">Latitude</param>
+        /// <param name="Z">Elevation</param>
+        /// <returns>Stationing</returns>
         public double getStnMPFromMeasure(double measure, out double MP, out double X, out double Y, out double Z)
+        {
+            return this.privateGetStnMPFromMeasure(measure, out MP, out X, out Y, out Z);
+        }
+
+        private double privateGetStnMPFromMeasure(double measure, out double MP, out double X, out double Y, out double Z)
         {
             //if the measure is out of bounds, bail out
             if (measure < this.pointList[0].meas || measure > this.pointList[this.pointList.Count - 1].meas)
@@ -561,7 +609,7 @@ namespace Enbridge.LinearReferencing
 
             int lowIndex = -1;
             int highIndex = -1;
-            
+
             for (int i = 1; i < this.pointList.Count; i++)
             {
                 if (measure == this.pointList[i].meas)
@@ -592,7 +640,7 @@ namespace Enbridge.LinearReferencing
         }
 
         /// <summary>
-        /// 
+        /// Calculate the volume out
         /// </summary>
         /// <param name="station"></param>
         /// <param name="mp"></param>
@@ -951,16 +999,32 @@ namespace Enbridge.LinearReferencing
             return result;
         }
 
+        /// <summary>
+        /// Make a segment geometry
+        /// </summary>
+        /// <param name="startMeas">Start continous measure</param>
+        /// <param name="endMeas">End continous measure</param>
+        /// <returns>LineString geometry as text</returns>
+        public string makeSegmentLineString(double startMeas, double endMeas)
+        {
+            double stnStart, stnEnd;
+            return this.privateMakeSegmentLineString(startMeas, endMeas, out stnStart, out stnEnd);
+        }
 
         /// <summary>
-        /// 
+        /// Start continous measure
         /// </summary>
-        /// <param name="startMeas"></param>
-        /// <param name="endMeas"></param>
-        /// <param name="stnStart"></param>
-        /// <param name="stnEnd"></param>
-        /// <returns>linestring representation of the geometry</returns>
+        /// <param name="startMeas">Start continous measure</param>
+        /// <param name="endMeas">End continous measure</param>
+        /// <param name="stnStart">Start stationing</param>
+        /// <param name="stnEnd">End stationing</param>
+        /// <returns>LineString geometry as text</returns>
         public string makeSegmentLineString(double startMeas, double endMeas, out double stnStart, out double stnEnd)
+        {
+            return this.privateMakeSegmentLineString(startMeas, endMeas, out stnStart, out stnEnd);
+        }
+
+        private string privateMakeSegmentLineString(double startMeas, double endMeas, out double stnStart, out double stnEnd)
         {
             int lowIndex = -1;
             int highIndex = -1;

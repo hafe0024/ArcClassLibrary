@@ -114,6 +114,8 @@
     <Compile Include="Drawings\DwgRecord.cs" />
     <Compile Include="Drawings\FileFolder.cs" />
     <Compile Include="Examples\Animals.cs" />
+    <Compile Include="Examples\ExamplePoint.cs" />
+    <Compile Include="Examples\PointGeometry.cs" />
     <Compile Include="GeoJSON\GeoJSON.cs" />
     <Compile Include="GeoJSON\JSONFeature.cs" />
     <Compile Include="GeoJSON\JSONGeometry.cs" />
@@ -128,10 +130,12 @@
     <Compile Include="PLM\CorrosionInpsection.cs" />
     <Compile Include="PLM\FileAttachments.cs" />
     <Compile Include="PLM\ForeignCrossing.cs" />
+    <Compile Include="PLM\LinearFeatures.cs" />
     <Compile Include="PLM\PermanentRepair.cs" />
     <Compile Include="PLM\PlmReport.cs" />
     <Compile Include="PLM\PLM_Constants.cs" />
     <Compile Include="PLM\PLM_Helpers.cs" />
+    <Compile Include="PLM\PointFeatures.cs" />
     <Compile Include="PLM\ReportProperties.cs" />
     <Compile Include="PLM\RowInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

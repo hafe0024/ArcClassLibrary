@@ -11,32 +11,92 @@ namespace ConsoleTester
 {
     class Program
     {
-
-        //static void Main(string[] args)
-        //{
-
-            
-        //    Console.WriteLine("How many legs {0}", 10);
-        //    Console.ReadLine();
-
-
-
-        //}
-
-
-
         static void Main(string[] args)
         {
-            Enbridge.PLM.PlmReport report = new Enbridge.PLM.PlmReport();
+            //Fully qualified name
+            //Enbridge.Examples.ExamplePoint
+            //save some typing with "using Enbridge.Examples;" at the top
 
-            report.setReportProperties("glenn", Guid.NewGuid(), "yes", null, null, "no", Guid.NewGuid(), "new report");
-            report.permanentRepair = new Enbridge.PLM.PermanentRepair();
-            report.permanentRepair.setTab1Values(DateTime.Now, DateTime.Now, "yes", "broke", "20", "4", "sweet", "2", "thick", "a house", "no");
-            report.permanentRepair.setTab2Values("yes", "2342", "remark", "no", DateTime.Now, "45", "-92", "no", "here", "fittings");
-            bool success = report.saveReport();
+            #region make a point
 
-            
+            ExamplePoint examplePoint = new ExamplePoint();
 
+            examplePoint.AddPointByMilePost(900);
+            examplePoint.pointName = "my new point3";
+            //Console.WriteLine(examplePoint.ToString());
+            bool successStatus = examplePoint.SaveToDatabase();
+            Console.WriteLine("succes {0}", successStatus);
+            #endregion
+
+            #region retrieve records
+
+            bool wassuccess = ExamplePoint.DeleteRecords();
+
+            //A list of ExamplePoints
+            //List<ExamplePoint> exampPointList = ExamplePoint.RetrieveRecords();
+
+            ////remember null is returned if something went wrong
+            //if (exampPointList == null)
+            //{
+            //    Console.WriteLine("Some error occured");
+            //}
+            //else
+            //{
+            //    foreach (ExamplePoint p in exampPointList)
+            //    {
+            //        Console.WriteLine(p.ToString());
+            //    }
+            //}
+
+            #endregion retrieve records
+
+            #region delete records
+            //Enbridge.Examples.ExamplePoint.DeleteRecords();
+
+            //Enbridge.Examples.ExamplePoint.DeleteRecords("{563F5AE8-F367-4E97-B75B-F1742DD84ECC}");
+
+            #endregion delete records
+
+
+
+
+            Console.ReadLine();
+            return;
+
+
+
+            //Enbridge.LinearReferencing.ContLineLocatorSQL loc = new Enbridge.LinearReferencing.ContLineLocatorSQL("{D4D4472B-FB1E-485B-A550-DCE76F63BC08}");
+
+            //double stn, meas1, meas2, X, Y, Z;
+            //stn = loc.getStnFromMP(780, out meas1, out X, out Y, out Z);
+            //stn = loc.getStnFromMP(781, out meas2, out X, out Y, out Z);
+            //string lineString = loc.makeSegmentLineString(meas1, meas2);
+            //Console.WriteLine(lineString);
+            //Console.ReadLine();
+
+            //Enbridge.PLM.PointFeatures pFeat = new Enbridge.PLM.PointFeatures();
+
+
+
+
+
+
+            //Enbridge.LinearReferencing.ContLineLocatorSQL loc2= new Enbridge.LinearReferencing.ContLineLocatorSQL("{D4D4472B-FB1E-485B-A550-DCE76F63BC08}");
+
+
+
+            //double stn, meas, mp;
+            //string stnId;
+
+            //stnId = loc.getLocation(-96.7026, 48.4013, out stn, out meas, out mp);
+
+            //Console.WriteLine("Stn id {0} {1}", stnId, "tttttt");
+            //Console.WriteLine("Stn {0}", stn);
+            //Console.WriteLine("Measure {0}", meas);
+            //Console.WriteLine("mp {0}", mp);
+
+            //Console.ReadLine();
+            //return;
 
 
 
@@ -243,7 +303,7 @@ namespace ConsoleTester
                     System.IO.File.Copy(dllPath, copyToPath, true);
                     Console.WriteLine("+++++ Copied to {0}", copyToPath);
                 }
-                catch (IOException ex)
+                catch (System.IO.IOException ex)
                 {
                     string msg = ex.Message;
                     Console.WriteLine("----- Not Copied to {0}", copyToPath);
@@ -258,7 +318,7 @@ namespace ConsoleTester
                 System.IO.File.Copy(dllXmlPath, xmlOutputPath, true);
                 Console.WriteLine(@"+++++ Copied XML to {0}", xmlOutputPath);
             }
-            catch (IOException ex)
+            catch (System.IO.IOException ex)
             {
                 string msg = ex.Message;
                 Console.WriteLine(@"----- Not Copied XML to {0}", xmlOutputPath);

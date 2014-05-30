@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Enbridge.PLM
 {
+    /// <summary>
+    /// Class methods to work with PLM report object and subobjects
+    /// </summary>
     public static class PLM_Helpers
     {
 
@@ -122,5 +125,93 @@ namespace Enbridge.PLM
             }
 
         }
+
+        public static Object nullOrDateFromDate(DateTime dateTime)
+        {
+            if (DateTime.Compare(dateTime, DateTime.MinValue) == 0)
+            {
+                return DBNull.Value;
+            }
+            else
+            {
+                return dateTime;
+            }
+
+        }
+
+        public static bool? processOneZeroToNullBool(Object databaseResult)
+        {
+            if (databaseResult == DBNull.Value)
+            {
+                return null;
+            }
+            else
+            {
+                int value = int.Parse(databaseResult.ToString());
+                switch (value)
+                {
+                    case 1:
+                        return true;
+                    case 0:
+                        return false;
+                    default:
+                        return null;
+                }
+            }
+        }
+
+        public static string processResultToString(Object readerRecord)
+        {
+            if (readerRecord == DBNull.Value)
+            {
+                return null;
+            }
+            else
+            {
+                return readerRecord.ToString();
+            }
+        }
+
+        public static double? processResultToNullableDouble(Object readerRecord)
+        {
+            if (readerRecord == DBNull.Value)
+            {
+                return null;
+            }
+            else
+            {
+                double output;
+                if (Double.TryParse(readerRecord.ToString(), out output))
+                {
+                    return output;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+        public static DateTime processResultToDate(Object readerRecord)
+        {
+            if (readerRecord == DBNull.Value)
+            {
+                return DateTime.MinValue;
+            }
+            else
+            {
+                DateTime output;
+                if (DateTime.TryParse(readerRecord.ToString(), out output))
+                {
+                    return output;
+                }
+                else
+                {
+                    return DateTime.MinValue;
+                }
+            }
+        }
+
+
     }
 }

@@ -4,32 +4,79 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Geocortex.Forms.Client;
+using System.Data.SqlClient;
 
 namespace Enbridge.PLM
 {
     [Serializable]
     public class FileAttachments
     {
-        public Dictionary<string, FileItem> uploadedFiles;
-        public Dictionary<string, FileItem> pendingFiles;
+        private Dictionary<string, FileItem> uploadedFilesFileItemDict = new Dictionary<string, FileItem>();
+        private Dictionary<string, FileItem> pendingFilesFileItemDict = new Dictionary<string, FileItem>();
+        public Dictionary<string, DataItem> uploadedFilesDataItemDict = new Dictionary<string, DataItem>();
+        public Dictionary<string, DataItem> pendingFilesDataItemDict = new Dictionary<string, DataItem>();
 
         public FileAttachments()
         {
-            this.uploadedFiles = new Dictionary<string, FileItem>();
-            this.pendingFiles = new Dictionary<string, FileItem>();
+
+        }
+
+        public FileAttachments(string reportId)
+        {
+            using (SqlConnection conn = new SqlConnection(AppConstants.CONN_STRING_PLM_REPORTS))
+            {
+                conn.Open();
+                SqlCommand comm = conn.CreateCommand();
+                comm.CommandText = "";
+                comm.CommandText += "EXEC sde.set_current_version 'SDE.Working';";
+                comm.CommandText += "SELECT ID, FileName, Loaded_Date FROM sde.ATTACHMENTS_EVW WHERE Report_ID = @ReportID";
+
+                comm.Parameters.AddWithValue("@ReportID", reportId);
+
+                try
+                {
+                    SqlDataReader reader = comm.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        string fileId = PLM_Helpers.processResultToString(reader["ID"]);
+                        string fileName = PLM_Helpers.processResultToString(reader["FileName"]);
+
+                        this.uploadedFilesFileItemDict.Add(fileId, null);
+                        this.uploadedFilesDataItemDict.Add(fileId, new DataItem(fileName, fileId));
+                    }
+
+                }
+                catch (SqlException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                finally
+                {
+                    comm.Dispose();
+                    conn.Close();
+                }
+            }
+
         }
 
 
         public void addFiles(IList<FileItem> uploadList)
         {
-            Console.WriteLine("adding files");
+
             foreach (FileItem fileItem in uploadList)
             {
-                Console.WriteLine("adding files");
-                this.pendingFiles.Add(Guid.NewGuid().ToString(), fileItem);
-                Console.WriteLine("done adding files");
+                string uniqueId = Guid.NewGuid().ToString();
+                this.pendingFilesFileItemDict.Add(uniqueId, fileItem);
+                this.pendingFilesDataItemDict.Add(uniqueId, new DataItem(fileItem.FileName, uniqueId));
             }
         }
+
+        public void removeFile(string id)
+        {
+            this.pendingFilesDataItemDict.Remove(id);
+            this.pendingFilesFileItemDict.Remove(id);
+        }
+
 
         /// <summary>
         /// Return a list of Geocortex DataItems representing the items in the FileItem dictionary
@@ -40,32 +87,84 @@ namespace Enbridge.PLM
         {
             List<DataItem> dataItemList = new List<DataItem>();
 
-            Dictionary<string, FileItem> selectedDictionary;
             switch (existingOrPending)
             {
                 case "existing":
-                    foreach (KeyValuePair<string, FileItem> entry in this.uploadedFiles)
+                    foreach (KeyValuePair<string, DataItem> entry in this.uploadedFilesDataItemDict)
                     {
-                        dataItemList.Add(new DataItem(entry.Value.FileName, entry.Key));
+                        dataItemList.Add(entry.Value);
                     }
                     break;
                 case "pending":
-                    foreach (KeyValuePair<string, FileItem> entry in this.pendingFiles)
+                    foreach (KeyValuePair<string, DataItem> entry in this.pendingFilesDataItemDict)
                     {
-                        dataItemList.Add(new DataItem(entry.Value.FileName, entry.Key));
+                        dataItemList.Add(entry.Value);
                     }
                     break;
                 default:
                     throw new Exception("existing or pending not set");
             }
 
-            Console.WriteLine("Item Count: {0}", dataItemList.Count);
-
             return dataItemList;
+        }
+
+
+        public bool savePendingFilesToDatabase(string reportID)
+        {
+            bool successStatus = false;
+
+            if (this.pendingFilesFileItemDict.Count == 0)
+            {
+                return true;
+            }
+
+            using (SqlConnection conn = new SqlConnection(AppConstants.CONN_STRING_PLM_REPORTS))
+            {
+                conn.Open();
+                SqlCommand comm = conn.CreateCommand();
+
+                foreach (KeyValuePair<string, FileItem> entry in this.pendingFilesFileItemDict)
+                {
+                    comm.Parameters.Clear();
+
+                    comm.CommandText = "";
+                    comm.CommandText += "EXEC sde.set_current_version 'SDE.Working';";
+                    comm.CommandText += "EXEC sde.edit_version 'SDE.Working', 1;";
+                    comm.CommandText += "BEGIN TRANSACTION;";
+                    comm.CommandText += "INSERT into sde.ATTACHMENTS_EVW (";
+                    comm.CommandText += "ID, Report_ID, ";
+                    comm.CommandText += "Data, FileName, Loaded_Date";
+                    comm.CommandText += ") Values (";
+                    comm.CommandText += "@ID, @Report_ID, ";
+                    comm.CommandText += "@Data, @FileName, GETDATE()";
+                    comm.CommandText += ");";
+                    comm.CommandText += "COMMIT;";
+                    comm.CommandText += "EXEC sde.edit_version 'SDE.Working', 2;";
+
+                    comm.Parameters.AddWithValue("@Report_ID", reportID);
+                    comm.Parameters.AddWithValue("@ID", entry.Key);
+                    comm.Parameters.AddWithValue("@Data", entry.Value.FileData);
+                    comm.Parameters.AddWithValue("@FileName", entry.Value.FileName);
+                    try
+                    {
+                        comm.ExecuteNonQuery();
+                        successStatus = true;
+
+                    }
+                    catch (SqlException ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        successStatus = false;
+                    }
+                }
+
+                comm.Dispose();
+                conn.Close();
+
+            }
+            return successStatus;
         }
 
     }
 
-
-   
 }

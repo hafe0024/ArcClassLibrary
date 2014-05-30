@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,51 +16,101 @@ namespace Enbridge.PLM
         /// <summary>
         /// ID of the crossing Type
         /// </summary>
-        public string crossingType;
+        public string crossingType = null;
         /// <summary>
         /// The method used to identify pipe location
         /// </summary>
-        public string methodToIdentify;
+        public string methodToIdentify = null;
         /// <summary>
         /// Method used to confirm pipe location
         /// </summary>
-        public string methodToConfirm;
+        public string methodToConfirm = null;
         /// <summary>
         /// If the corrosion tech was notified, null enabled
         /// </summary>
-        public bool? corrosionTechNotified;
+        public bool? corrosionTechNotified = null;
         /// <summary>
         /// If the pipe was damaged during installation, null enabled
         /// </summary>
-        public bool? pipeDamageDuringInstall;
+        public bool? pipeDamageDuringInstall = null;
         /// <summary>
         /// Was the pipe exposed during installation, null enabled
         /// </summary>
-        public bool? pipeWasExposed;
+        public bool? pipeWasExposed = null;
         /// <summary>
         /// Was a test station or bond installed, null enabled
         /// </summary>
-        public bool? testStationOrBondInstalled;
+        public bool? testStationOrBondInstalled = null;
         /// <summary>
         /// Date the changed was recorded on atlas
         /// </summary>
-        public DateTime dateRecordedOnAtlas;
+        public DateTime dateRecordedOnAtlas = DateTime.MinValue;
         /// <summary>
         /// Name of the inpsector
         /// </summary>
-        public string inspectorName;
+        public string inspectorName = null;
         /// <summary>
         /// Dig ticket
         /// </summary>
-        public string digTicket;
+        public string digTicket = null;
         /// <summary>
         /// Other info, comments
         /// </summary>
-        public string otherInfo;
+        public string otherInfo = null;
+
+        public bool hasValuesSet {get; private set;}
 
 
         public ForeignCrossing()
         {
+            this.hasValuesSet = false;
+        }
+
+
+        public ForeignCrossing(string reportId)
+        {
+            this.hasValuesSet = false;
+            using (SqlConnection conn = new SqlConnection(AppConstants.CONN_STRING_PLM_REPORTS))
+            {
+                conn.Open();
+                SqlCommand comm = conn.CreateCommand();
+                comm.CommandText = "";
+                comm.CommandText += "EXEC sde.set_current_version 'SDE.Working';";
+                comm.CommandText += "SELECT * FROM sde.FOREIGNCROSSING_EVW WHERE ReportID = @ReportID";
+
+                comm.Parameters.AddWithValue("@ReportID", reportId);
+
+                try
+                {
+                    SqlDataReader reader = comm.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        this.hasValuesSet = true;
+                        this.crossingType = PLM_Helpers.processResultToString(reader["CrossingType"]);
+                        this.methodToIdentify = PLM_Helpers.processResultToString(reader["MethodToIdentify"]);
+                        this.methodToConfirm = PLM_Helpers.processResultToString(reader["MethodToConfirm"]);
+                        this.corrosionTechNotified = PLM_Helpers.processOneZeroToNullBool(reader["CorrosionTechNotified"]);
+                        this.pipeDamageDuringInstall = PLM_Helpers.processOneZeroToNullBool(reader["PipeDamageDuringInstall"]);
+                        this.pipeWasExposed = PLM_Helpers.processOneZeroToNullBool(reader["PipeWasExposed"]);
+                        this.testStationOrBondInstalled = PLM_Helpers.processOneZeroToNullBool(reader["TestStationOrBondInstalled"]);
+                        this.dateRecordedOnAtlas = PLM_Helpers.processResultToDate(reader["DateRecordedOnAtlas"]);
+                        this.inspectorName = PLM_Helpers.processResultToString(reader["InspectorName"]);
+                        this.digTicket = PLM_Helpers.processResultToString(reader["DigTicket"]);
+                        this.otherInfo = PLM_Helpers.processResultToString(reader["OtherInfo"]);
+                    }
+
+                }
+                catch (SqlException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                finally
+                {
+                    comm.Dispose();
+                    conn.Close();
+                }
+            }
+
 
         }
 
@@ -67,15 +118,16 @@ namespace Enbridge.PLM
         /// <summary>
         /// Foreign crossing constructor
         /// </summary>
-        public ForeignCrossing(Object crossType, string identifyMethod, string confirmMethod, Object corrosionTechNotified,
+        public void setForeignCrossingValues(Object crossType, Object identifyMethod, Object confirmMethod, Object corrosionTechNotified,
             Object pipeDamageDuringInstall, Object wasPipeExposed, Object testStationOrBondInstalled, DateTime dateOnAtlas,
             string inspectorName, string digTicket, string otherInfo)
         {
+            this.hasValuesSet = true;
 
             this.crossingType = PLM_Helpers.getComboBoxSelectedValue(crossType);
 
-            this.methodToIdentify = identifyMethod;
-            this.methodToConfirm = confirmMethod;
+            this.methodToIdentify = PLM_Helpers.getComboBoxSelectedValue(identifyMethod);
+            this.methodToConfirm = PLM_Helpers.getComboBoxSelectedValue(confirmMethod);
 
             //Set corrosion tech notified property
             this.corrosionTechNotified = PLM_Helpers.trueFalseValue(corrosionTechNotified);
@@ -125,5 +177,102 @@ namespace Enbridge.PLM
             returnString += string.Format("Other info: {0}", this.otherInfo);
             return returnString;
         }
+
+        public bool saveToDatabase(string reportID)
+        {
+            if (!this.hasValuesSet)
+            {
+                return true;
+            }
+            bool successStatus = false;
+            using (SqlConnection conn = new SqlConnection(AppConstants.CONN_STRING_PLM_REPORTS))
+            {
+                conn.Open();
+                SqlCommand comm = conn.CreateCommand();
+                bool updateExisting = false;
+                comm.CommandText = "";
+                comm.CommandText += "EXEC sde.set_current_version 'SDE.Working';";
+                comm.CommandText += "SELECT COUNT(*) FROM sde.FOREIGNCROSSING_EVW WHERE ReportID = @reportID;";
+
+                comm.Parameters.AddWithValue("@reportID", reportID);
+                try
+                {
+                    int rowCount = (int)comm.ExecuteScalar();
+                    updateExisting = (rowCount > 0 ? true : false);
+                }
+                catch (SqlException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    conn.Close();
+                    successStatus = false;
+                    return successStatus;
+                }
+
+                comm.Parameters.Clear();
+
+                comm.CommandText = "";
+                comm.CommandText += "EXEC sde.set_current_version 'SDE.Working';";
+                comm.CommandText += "EXEC sde.edit_version 'SDE.Working', 1;";
+                comm.CommandText += "BEGIN TRANSACTION;";
+                if (updateExisting)
+                {
+                    comm.CommandText += "UPDATE sde.FOREIGNCROSSING_EVW SET ";
+                    comm.CommandText += "CrossingType=@CrossingType, MethodToIdentify=@MethodToIdentify, MethodToConfirm=@MethodToConfirm, ";
+                    comm.CommandText += "CorrosionTechNotified=@CorrosionTechNotified, PipeDamageDuringInstall=@PipeDamageDuringInstall, ";
+                    comm.CommandText += "PipeWasExposed=@PipeWasExposed, TestStationOrBondInstalled=@TestStationOrBondInstalled, ";
+                    comm.CommandText += "DateRecordedOnAtlas=@DateRecordedOnAtlas, InspectorName=@InspectorName, DigTicket=@DigTicket, ";
+                    comm.CommandText += "OtherInfo=@OtherInfo ";
+                    comm.CommandText += "WHERE ReportID = @reportID; ";
+                }
+                else
+                {
+                    comm.CommandText += "INSERT into sde.FOREIGNCROSSING_EVW (";
+                    comm.CommandText += "ID, ReportID, ";
+                    comm.CommandText += "CrossingType, MethodToIdentify, MethodToConfirm, CorrosionTechNotified, PipeDamageDuringInstall, ";
+                    comm.CommandText += "PipeWasExposed, TestStationOrBondInstalled, DateRecordedOnAtlas, InspectorName, DigTicket, OtherInfo";
+                    comm.CommandText += ") Values (";
+                    comm.CommandText += "NEWID(), @ReportID, ";
+                    comm.CommandText += "@CrossingType, @MethodToIdentify, @MethodToConfirm, @CorrosionTechNotified, @PipeDamageDuringInstall, ";
+                    comm.CommandText += "@PipeWasExposed, @TestStationOrBondInstalled, @DateRecordedOnAtlas, @InspectorName, @DigTicket, @OtherInfo";
+                    comm.CommandText += ");";
+                }
+                comm.CommandText += "COMMIT;";
+                comm.CommandText += "EXEC sde.edit_version 'SDE.Working', 2;";
+
+                comm.Parameters.AddWithValue("@reportID", reportID);
+                comm.Parameters.AddWithValue("@CrossingType", PLM_Helpers.nullOrStringFromString(this.crossingType));
+                comm.Parameters.AddWithValue("@MethodToIdentify", PLM_Helpers.nullOrStringFromString(this.methodToIdentify));
+                comm.Parameters.AddWithValue("@MethodToConfirm", PLM_Helpers.nullOrStringFromString(this.methodToConfirm));
+                comm.Parameters.AddWithValue("@CorrosionTechNotified", PLM_Helpers.nullOneOrZeroFromNullableBool(this.corrosionTechNotified));
+                comm.Parameters.AddWithValue("@PipeDamageDuringInstall", PLM_Helpers.nullOneOrZeroFromNullableBool(this.pipeDamageDuringInstall));
+                comm.Parameters.AddWithValue("@PipeWasExposed", PLM_Helpers.nullOneOrZeroFromNullableBool(this.pipeWasExposed));
+                comm.Parameters.AddWithValue("@TestStationOrBondInstalled", PLM_Helpers.nullOneOrZeroFromNullableBool(this.testStationOrBondInstalled));
+                comm.Parameters.AddWithValue("@DateRecordedOnAtlas", PLM_Helpers.nullOrDateFromDate(this.dateRecordedOnAtlas));
+                comm.Parameters.AddWithValue("@InspectorName", PLM_Helpers.nullOrStringFromString(this.inspectorName));
+                comm.Parameters.AddWithValue("@DigTicket", PLM_Helpers.nullOrStringFromString(this.digTicket));
+                comm.Parameters.AddWithValue("@OtherInfo", PLM_Helpers.nullOrStringFromString(this.otherInfo, 255));
+                
+                try
+                {
+                    comm.ExecuteNonQuery();
+                    successStatus = true;
+
+                }
+                catch (SqlException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                finally
+                {
+                    comm.Dispose();
+                    conn.Close();
+                }
+            }
+            return successStatus;
+
+
+        }
+
+
     }
 }
