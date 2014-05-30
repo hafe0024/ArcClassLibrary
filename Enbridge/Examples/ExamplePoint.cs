@@ -244,7 +244,6 @@ namespace Enbridge.Examples
 
 
 
-
         /// <summary>
         /// Delete point or all points
         /// </summary>
@@ -345,7 +344,7 @@ namespace Enbridge.Examples
                 //if no id has been provided, select all points
                 if (pointId == null)
                 {
-                    comm.CommandText += "SELECT *, Shape.AsTextZM() as geomText  FROM sde.EXAMPLEPOINTS_EVW ";
+                    comm.CommandText += "SELECT *, Shape.AsTextZM() as geomText FROM sde.EXAMPLEPOINTS_EVW;";
                 }
                 //otherwise just select one by adding the where clause and parameter
                 //Remember that the method will still return a list, even if there is 1 record or 0 per the query
@@ -429,7 +428,10 @@ namespace Enbridge.Examples
                         exampPoint.uniqueId = reader["Name"].ToString();
 
                         //Same for MilePost which is a double
-                        exampPoint.milePost = Double.Parse(reader["MilePost"].ToString());
+                        if (reader["MilePost"] != DBNull.Value)
+                        {
+                            exampPoint.milePost = Double.Parse(reader["MilePost"].ToString());
+                        }
 
                         /*Parse the geometry representation
                          * Given the "field" specified in the query
@@ -551,5 +553,38 @@ namespace Enbridge.Examples
             }
             return count;
         }
+
+
+        public static List<ESRI.ArcGIS.Client.Graphic> GetGraphicList()
+        {
+            
+            List<ESRI.ArcGIS.Client.Graphic> graphicList = new List<ESRI.ArcGIS.Client.Graphic>();
+
+
+            List<ExamplePoint> examplePointList = ExamplePoint.RetrieveRecords();
+
+            ESRI.ArcGIS.Client.Geometry.SpatialReference spatialRef = new ESRI.ArcGIS.Client.Geometry.SpatialReference(4326);
+
+            foreach (ExamplePoint p in examplePointList)
+            {
+                ESRI.ArcGIS.Client.Graphic myGraphic = new ESRI.ArcGIS.Client.Graphic();
+
+                myGraphic.Geometry = new ESRI.ArcGIS.Client.Geometry.MapPoint(p.pointGeometry.X, p.pointGeometry.Y, spatialRef);
+
+                myGraphic.Attributes.Add("MilePost", p.milePost);
+
+
+
+                graphicList.Add(myGraphic);
+                
+            }
+
+
+            return graphicList;
+
+
+        }
+
+
     }
 }

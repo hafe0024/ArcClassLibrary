@@ -21,32 +21,32 @@ namespace ConsoleTester
 
             ExamplePoint examplePoint = new ExamplePoint();
 
-            examplePoint.AddPointByMilePost(900);
+            examplePoint.AddPointByMilePost(950);
             examplePoint.pointName = "my new point3";
             //Console.WriteLine(examplePoint.ToString());
             bool successStatus = examplePoint.SaveToDatabase();
-            Console.WriteLine("succes {0}", successStatus);
+           
             #endregion
 
             #region retrieve records
 
-            bool wassuccess = ExamplePoint.DeleteRecords();
+            //bool wassuccess = ExamplePoint.DeleteRecords();
 
             //A list of ExamplePoints
-            //List<ExamplePoint> exampPointList = ExamplePoint.RetrieveRecords();
+            List<ExamplePoint> exampPointList = ExamplePoint.RetrieveRecords();
 
-            ////remember null is returned if something went wrong
-            //if (exampPointList == null)
-            //{
-            //    Console.WriteLine("Some error occured");
-            //}
-            //else
-            //{
-            //    foreach (ExamplePoint p in exampPointList)
-            //    {
-            //        Console.WriteLine(p.ToString());
-            //    }
-            //}
+            //remember null is returned if something went wrong
+            if (exampPointList == null)
+            {
+                Console.WriteLine("Some error occured");
+            }
+            else
+            {
+                foreach (ExamplePoint p in exampPointList)
+                {
+                    Console.WriteLine(p.ToString());
+                }
+            }
 
             #endregion retrieve records
 
@@ -58,7 +58,7 @@ namespace ConsoleTester
             #endregion delete records
 
 
-
+            Console.WriteLine("Point Count {0}", ExamplePoint.GetPointCount());
 
             Console.ReadLine();
             return;
