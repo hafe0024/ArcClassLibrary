@@ -13,55 +13,59 @@ namespace ConsoleTester
     {
         static void Main(string[] args)
         {
+
+            List<ESRI.ArcGIS.Client.Graphic> graphList = Enbridge.Examples.ExamplePoint.GetGraphicList();
+
             //Fully qualified name
             //Enbridge.Examples.ExamplePoint
             //save some typing with "using Enbridge.Examples;" at the top
 
-            #region make a point
+            //#region make a point
 
             ExamplePoint examplePoint = new ExamplePoint();
 
-            examplePoint.AddPointByMilePost(950);
-            examplePoint.pointName = "my new point3";
-            //Console.WriteLine(examplePoint.ToString());
+            examplePoint.AddPointByMilePost(1005);
+            examplePoint.pointName = "my new point5";
             bool successStatus = examplePoint.SaveToDatabase();
+            examplePoint.AddPointByMilePost(1020);
+            successStatus = examplePoint.SaveToDatabase();
            
-            #endregion
+            //#endregion
 
-            #region retrieve records
+            //#region retrieve records
 
-            //bool wassuccess = ExamplePoint.DeleteRecords();
+            ////bool wassuccess = ExamplePoint.DeleteRecords();
 
-            //A list of ExamplePoints
-            List<ExamplePoint> exampPointList = ExamplePoint.RetrieveRecords();
+            ////A list of ExamplePoints
+            //List<ExamplePoint> exampPointList = ExamplePoint.RetrieveRecords();
 
-            //remember null is returned if something went wrong
-            if (exampPointList == null)
-            {
-                Console.WriteLine("Some error occured");
-            }
-            else
-            {
-                foreach (ExamplePoint p in exampPointList)
-                {
-                    Console.WriteLine(p.ToString());
-                }
-            }
+            ////remember null is returned if something went wrong
+            //if (exampPointList == null)
+            //{
+            //    Console.WriteLine("Some error occured");
+            //}
+            //else
+            //{
+            //    foreach (ExamplePoint p in exampPointList)
+            //    {
+            //        Console.WriteLine(p.ToString());
+            //    }
+            //}
 
-            #endregion retrieve records
+            //#endregion retrieve records
 
-            #region delete records
-            //Enbridge.Examples.ExamplePoint.DeleteRecords();
+            //#region delete records
+            ////Enbridge.Examples.ExamplePoint.DeleteRecords();
 
-            //Enbridge.Examples.ExamplePoint.DeleteRecords("{563F5AE8-F367-4E97-B75B-F1742DD84ECC}");
+            ////Enbridge.Examples.ExamplePoint.DeleteRecords("{563F5AE8-F367-4E97-B75B-F1742DD84ECC}");
 
-            #endregion delete records
+            //#endregion delete records
 
 
-            Console.WriteLine("Point Count {0}", ExamplePoint.GetPointCount());
+            //Console.WriteLine("Point Count {0}", ExamplePoint.GetPointCount());
 
-            Console.ReadLine();
-            return;
+            //Console.ReadLine();
+            //return;
 
 
 
@@ -284,8 +288,8 @@ namespace ConsoleTester
         private static void copyDlls()
         {
             //Input file paths
-            string dllPath = @"S:\EnbridgeClassLibrary\Enbridge\bin\Debug\Enbridge.dll";
-            string dllXmlPath = @"S:\EnbridgeClassLibrary\Enbridge\bin\Debug\Enbridge.xml";
+            string dllPath =  Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Enbridge.dll");
+            string dllXmlPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Enbridge.xml");
 
             //List of output paths for the dll
             string[] copyDllPaths = {

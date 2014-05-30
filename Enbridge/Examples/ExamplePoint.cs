@@ -573,7 +573,7 @@ namespace Enbridge.Examples
 
                 myGraphic.Attributes.Add("MilePost", p.milePost);
 
-
+                myGraphic.Attributes.Add("PointName", p.pointName);
 
                 graphicList.Add(myGraphic);
                 
