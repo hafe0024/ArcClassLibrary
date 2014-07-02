@@ -13,6 +13,16 @@ namespace ConsoleTester
     {
         static void Main(string[] args)
         {
+            Enbridge.LinearReferencing.ContLineLocatorSQL loc = new Enbridge.LinearReferencing.ContLineLocatorSQL("{D4D4472B-FB1E-485B-A550-DCE76F63BC08}");
+
+            double meas, X, Y, Z;
+            double stn = loc.getStnFromMP(780, out meas, out X, out Y, out Z);
+            Console.WriteLine("{0} {1} {2} {3}", stn, meas, X, Y, Z);
+
+            Console.WriteLine("finished");
+                Console.WriteLine("finished");
+            Console.ReadLine();
+            return;
 
             List<ESRI.ArcGIS.Client.Graphic> graphList = Enbridge.Examples.ExamplePoint.GetGraphicList();
 
@@ -69,7 +79,6 @@ namespace ConsoleTester
 
 
 
-            //Enbridge.LinearReferencing.ContLineLocatorSQL loc = new Enbridge.LinearReferencing.ContLineLocatorSQL("{D4D4472B-FB1E-485B-A550-DCE76F63BC08}");
 
             //double stn, meas1, meas2, X, Y, Z;
             //stn = loc.getStnFromMP(780, out meas1, out X, out Y, out Z);

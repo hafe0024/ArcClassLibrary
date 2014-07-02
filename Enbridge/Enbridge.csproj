@@ -39,8 +39,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Q:\Workflow Designer\ESRI.ArcGIS.Client.dll</HintPath>
     </Reference>
-    <Reference Include="ESRI.ArcGIS.DataManagementTools, Version=10.2.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="ESRI.ArcGIS.DataManagementTools">
       <HintPath>U:\DotNet\ToolBoxes\ESRI.ArcGIS.DataManagementTools.dll</HintPath>
     </Reference>
     <Reference Include="ESRI.ArcGIS.DataSourcesGDB, Version=10.2.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=MSIL">
