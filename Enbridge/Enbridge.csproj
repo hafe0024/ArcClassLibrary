@@ -37,46 +37,48 @@
   <ItemGroup>
     <Reference Include="ESRI.ArcGIS.Client, Version=10.1.1.0, Culture=neutral, PublicKeyToken=29c6dd6e8553d944, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>Q:\Workflow Designer\ESRI.ArcGIS.Client.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Latitude Geographics\Geocortex Essentials\Default\Workflow Designer\ESRI.ArcGIS.Client.dll</HintPath>
     </Reference>
-    <Reference Include="ESRI.ArcGIS.DataManagementTools">
-      <HintPath>U:\DotNet\ToolBoxes\ESRI.ArcGIS.DataManagementTools.dll</HintPath>
+    <Reference Include="ESRI.ArcGIS.DataManagementTools, Version=10.2.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>\\supgis01\DeveloperKit10.2\DotNet\ToolBoxes\ESRI.ArcGIS.DataManagementTools.dll</HintPath>
     </Reference>
     <Reference Include="ESRI.ArcGIS.DataSourcesGDB, Version=10.2.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>U:\DotNet\ESRI.ArcGIS.DataSourcesGDB.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>\\supgis01\DeveloperKit10.2\DotNet\ESRI.ArcGIS.DataSourcesGDB.dll</HintPath>
     </Reference>
     <Reference Include="ESRI.ArcGIS.DataSourcesRaster, Version=10.2.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>U:\DotNet\ESRI.ArcGIS.DataSourcesRaster.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>\\supgis01\DeveloperKit10.2\DotNet\ESRI.ArcGIS.DataSourcesRaster.dll</HintPath>
     </Reference>
     <Reference Include="ESRI.ArcGIS.Geodatabase, Version=10.2.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>U:\DotNet\ESRI.ArcGIS.Geodatabase.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>\\supgis01\DeveloperKit10.2\DotNet\ESRI.ArcGIS.Geodatabase.dll</HintPath>
     </Reference>
     <Reference Include="ESRI.ArcGIS.Geometry, Version=10.2.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>U:\DotNet\ESRI.ArcGIS.Geometry.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>\\supgis01\DeveloperKit10.2\DotNet\ESRI.ArcGIS.Geometry.dll</HintPath>
     </Reference>
     <Reference Include="ESRI.ArcGIS.Geoprocessor, Version=10.2.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>U:\DotNet\ESRI.ArcGIS.Geoprocessor.dll</HintPath>
+      <HintPath>\\supgis01\DeveloperKit10.2\DotNet\ESRI.ArcGIS.Geoprocessor.dll</HintPath>
     </Reference>
     <Reference Include="ESRI.ArcGIS.System, Version=10.2.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>U:\DotNet\ESRI.ArcGIS.System.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>\\supgis01\DeveloperKit10.2\DotNet\ESRI.ArcGIS.System.dll</HintPath>
     </Reference>
     <Reference Include="ESRI.ArcGIS.Version, Version=10.2.0.0, Culture=neutral, PublicKeyToken=8fc3cc631e44ad86, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>U:\DotNet\ESRI.ArcGIS.Version.dll</HintPath>
+      <HintPath>\\supgis01\DeveloperKit10.2\DotNet\ESRI.ArcGIS.Version.dll</HintPath>
     </Reference>
-    <Reference Include="Geocortex.EssentialsWpfApi">
-      <HintPath>Q:\Workflow Designer\Geocortex.EssentialsWpfApi.dll</HintPath>
+    <Reference Include="Geocortex.EssentialsWpfApi, Version=2.13.0.302, Culture=neutral, PublicKeyToken=9fc96cbe484ecd5a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Latitude Geographics\Geocortex Essentials\Default\Workflow Designer\Geocortex.EssentialsWpfApi.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />

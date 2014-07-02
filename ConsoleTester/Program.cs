@@ -15,14 +15,16 @@ namespace ConsoleTester
         {
             Enbridge.LinearReferencing.ContLineLocatorSQL loc = new Enbridge.LinearReferencing.ContLineLocatorSQL("{D4D4472B-FB1E-485B-A550-DCE76F63BC08}");
 
+
+            
             double meas, X, Y, Z;
             double stn = loc.getStnFromMP(780, out meas, out X, out Y, out Z);
             Console.WriteLine("{0} {1} {2} {3}", stn, meas, X, Y, Z);
 
             Console.WriteLine("finished");
-                Console.WriteLine("finished");
-            Console.ReadLine();
-            return;
+            Console.WriteLine("finished");
+            //Console.ReadLine();
+            //return;
 
             List<ESRI.ArcGIS.Client.Graphic> graphList = Enbridge.Examples.ExamplePoint.GetGraphicList();
 
@@ -32,13 +34,13 @@ namespace ConsoleTester
 
             //#region make a point
 
-            ExamplePoint examplePoint = new ExamplePoint();
+            //ExamplePoint examplePoint = new ExamplePoint();
 
-            examplePoint.AddPointByMilePost(1005);
-            examplePoint.pointName = "my new point5";
-            bool successStatus = examplePoint.SaveToDatabase();
-            examplePoint.AddPointByMilePost(1020);
-            successStatus = examplePoint.SaveToDatabase();
+            //examplePoint.AddPointByMilePost(1005);
+            //examplePoint.pointName = "my new point5";
+            //bool successStatus = examplePoint.SaveToDatabase();
+            //examplePoint.AddPointByMilePost(1020);
+            //successStatus = examplePoint.SaveToDatabase();
            
             //#endregion
 
@@ -302,7 +304,7 @@ namespace ConsoleTester
 
             //List of output paths for the dll
             string[] copyDllPaths = {
-                                    @"C:\Program Files (x86)\Latitude Geographics\Workflow Designer\Enbridge.dll",
+                                    @"C:\Program Files (x86)\Latitude Geographics\Geocortex Essentials\Default\Workflow Designer\Enbridge.dll",
                                     @"Q:\Workflow Designer\Enbridge.dll",
                                     @"Q:\REST Elements\REST\bin\Enbridge.dll"
                                     };
