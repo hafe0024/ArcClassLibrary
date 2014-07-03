@@ -93,6 +93,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="UpdateDLLs.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
