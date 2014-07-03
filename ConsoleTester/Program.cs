@@ -13,6 +13,7 @@ namespace ConsoleTester
     {
         static void Main(string[] args)
         {
+            //new comment
             string string_MP = "1010";
             double double_MP;
 
