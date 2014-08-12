@@ -378,7 +378,7 @@ namespace Enbridge.LinearReferencing
            
 
             meas = ((degInterval - d1) / degInterval) * pointList[index1].meas + ((degInterval - d2) / degInterval) * pointList[index2].meas;
-            mp = ((degInterval - d2) / degInterval) * pointList[index1].MP + ((degInterval - d2) / degInterval) * pointList[index2].MP;
+            mp = ((degInterval - d1) / degInterval) * pointList[index1].MP + ((degInterval - d2) / degInterval) * pointList[index2].MP;
             return "{" + pointList[index1].stnSeries.ToUpper() + "}";
         }
 
